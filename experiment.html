@@ -41,19 +41,17 @@
         type: 'html-keyboard-response',
         stimulus: '<p style="font-size: 48px;">+</p>',
         choices: jsPsych.NO_KEYS,
-        trial_duration: 1000,
-     };
+        trial_duration: 1000};
 
-     // preload stimuli
-     var scenes_to_preload
-     var objects_to_preload
-     scenes_to_preload = enc_data.map(enc_data => enc_data.Scene);
-     objects_to_preload = enc_data.map(enc_data => enc_data.Object);
-
-     var preload = {
-       type: 'preload',
-       images: scenes_to_preload.concat(objects_to_preload)
-     }
+    // preload stimuli
+    var scenes_to_preload
+    var objects_to_preload
+    scenes_to_preload = enc_data.map(enc_data => enc_data.Scene);
+    objects_to_preload = enc_data.map(enc_data => enc_data.Object);
+    var preload = {
+     type: 'preload',
+     images: scenes_to_preload.concat(objects_to_preload)
+    }
 
     // encoding
 
