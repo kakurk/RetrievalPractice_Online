@@ -4,7 +4,8 @@
         <title>My experiment</title>
         <script src="jspsych-6.3.0/jspsych.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-html-keyboard-response.js"></script>
-          <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-preload.js"></script>
         <script src="encoding.js"></script>
         <link href="jspsych-6.3.0/css/jspsych.css" rel="stylesheet" type="text/css">
         <style>
@@ -43,6 +44,17 @@
         trial_duration: 1000,
      };
 
+     // preload stimuli
+     var scenes_to_preload
+     var objects_to_preload
+     scenes_to_preload = enc_data.map(enc_data => enc_data.Scene);
+     objects_to_preload = enc_data.map(enc_data => enc_data.Object);
+
+     var preload = {
+       type: 'preload',
+       images: scenes_to_preload.concat(objects_to_preload)
+     }
+
     // encoding
 
     var enc_instruction = {
@@ -60,7 +72,6 @@
        var ctx = c.getContext('2d');
        var object = new Image();
        var scene = new Image();
-       var images = ['stim/objects/Backpack_1_br.png', 'stim/scenes/Airport1.jpg']
        object.src = jsPsych.timelineVariable('Object');
        scene.src = jsPsych.timelineVariable('Scene');
        scene.addEventListener('load', function() {
@@ -164,7 +175,7 @@
    // initialize jsPsych
 
     jsPsych.init({
-        timeline: [encoding] // restudy_practice
+        timeline: [preload, encoding] // restudy_practice
     })
 
     </script>
