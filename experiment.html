@@ -35,7 +35,7 @@
 
      var image_example = "<div class='parent'><img class='foreground' src='https://placehold.it/50' /></div>";
 
-     // encoding specific
+     // encoding
 
      var enc_instruction = {
       type: 'html-keyboard-response',
@@ -58,10 +58,7 @@
       timeline_variables: [{image: image_example}, {image: image_example}]
     }
 
-    // enc_instruction
     var encoding = {timeline: [enc_instruction, encoding_trials, iti]}
-
-   // PRACTICE
 
    // Restudy
 
@@ -87,11 +84,63 @@
 
    var restudy = {timeline: [restudy_instructions, restudy_trials]}
 
-   // practice
-   
+   // Practice
+
+   var retpractice_instructions = {
+     type: 'html-keyboard-response',
+     stimulus: '<p style="font-size: 48px;">PRACTICE</p>',
+     choices: jsPsych.NO_KEYS,
+     trial_duration: 4000,
+   }
+
+   var practice_stimulus = {
+       type: 'html-keyboard-response',
+       stimulus: jsPsych.timelineVariable('image'),
+       trial_duration: 6000,
+       response_ends_trial: false,
+       choices: ['1','2'],
+   };
+
+   var practice_feedback = {
+     type: 'html-keyboard-response',
+     stimulus: jsPsych.timelineVariable('feedback'),
+     trial_duration: 1000,
+     response_ends_trial: false,
+     choices: null,
+   }
+
+   var practice_trials = {
+     timeline: [iti, practice_stimulus, practice_feedback],
+     timeline_variables: [{image: image_example}, {image: image_example}],
+   }
+
+   var practice = {timeline: [retpractice_instructions, practice_trials]}
+
+   var restudy_practice = {timeline: [restudy, practice], repetitions: 3}
+
+   // retrieval
+
+   var retreival_instructions = {
+     type: 'html-keyboard-response',
+     stimulus: '<p style = "font-size: 48px;">RETREIVAL</p>',
+     choices: jsPsych.NO_KEYS,
+     trial_duration: 4000,
+   }
+
+   var retrieval_gist_test = {
+     type: 'html-keyboard-response',
+     stimulus: '',
+
+   }
+
+   var retreival_verbaitum_test = {
+
+   }
+
+   // initialize jsPsych
 
     jsPsych.init({
-        timeline: [encoding, restudy]
+        timeline: [encoding, restudy_practice]
     })
 
     </script>
