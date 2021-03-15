@@ -24,6 +24,14 @@
     <body></body>
     <script>
 
+    // experiment wide parameters
+    var canvasW = 1200 // width of the drawing area (px)
+    var canvasH = 600 // height of the drawing area (px)
+    var objectH = 200 // height of the probe (px)
+    var objectW = 200 // width of the probe (px)
+    var sceneW = 1000 // width of the alternatives (px)
+    var sceneH = sceneW*(412/600) // height of the alternatives (px)    
+
     // experiment wide
 
     var iti = {
@@ -32,8 +40,6 @@
         choices: jsPsych.NO_KEYS,
         trial_duration: 1000,
      };
-
-     var image_example = "<div class='parent'><img class='foreground' src='https://placehold.it/50' /></div>";
 
      // encoding
 
@@ -44,14 +50,30 @@
       trial_duration: 4000,
      };
 
-    var encoding_stimulus = {
-        type: 'html-keyboard-response',
-        stimulus: jsPsych.timelineVariable('image'),
-        prompt: '1- Likely 2 - Unlikely',
-        trial_duration: 4000,
-        response_ends_trial: false,
-        choices: ['1','2'],
-    };
+     var enc_stimulus = {
+       type: 'canvas-keyboard-response',
+       stimulus: function(c) {
+         // c.style.border = "5px solid #A9A9A9";
+         // present images on a canvas at specific locations
+         var ctx = c.getContext('2d');
+         var object = new Image();
+         var scene = new Image();
+         var images = ['stim/objects/Backpack_1_br.png', 'stim/scenes/Airport1.jpg']
+         object.src = 'stim/objects/Backpack_1_br.png';
+         scene.src = 'stim/scenes/Airport1.jpg';
+         scene.addEventListener('load', function() {
+           var centerx = canvasW/2 - sceneW/2;
+           var centery = canvasH/2 - sceneH/2;
+           ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+           var centerx = canvasW/2 - objectW/2;
+           var centery = canvasH/2 - objectH/2;
+           ctx.drawImage(object, centerx, centery-200, objectW, objectH);
+         }, false);
+       },
+       canvas_size: [canvasH, canvasW],
+       choices: ['1','2','3','4','5','6'],
+       trial_duration: null
+     };
 
     var encoding_trials = {
       timeline: [iti, encoding_stimulus],
