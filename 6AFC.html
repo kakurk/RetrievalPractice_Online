@@ -1,0 +1,113 @@
+<html>
+    <head>
+        <title>My experiment</title>
+        <script src="jspsych-6.3.0/jspsych.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response.js"></script>
+        <link href="jspsych-6.3.0/css/jspsych.css" rel="stylesheet" type="text/css">
+        <style>
+            .parent {
+              position: relative;
+              width: 300px;
+              height: 300px;
+              background-image: url(https://placehold.it/300);
+              border: 5px blue solid;
+            }
+            .foreground {
+              position: absolute;
+              top: 30px;
+              left: 30px;
+              border: 5px red solid;
+            }
+          </style>
+    </head>
+    <body></body>
+    <script>
+
+var canvasW = 1200 // width of the drawing area (px)
+var canvasH = 600 // height of the drawing area (px)
+var probeH = 200 // height of the probe (px)
+var probeW = 200 // width of the probe (px)
+var AFC_H = 125 // height of the alternatives (px)
+var AFC_W = AFC_H * 600/412 // width of the alternatives (px)
+var firstRow = 250
+var secondRow = 425
+var firstColumn = 300
+var secondColumn = canvasW/2 - AFC_W/2
+var thirdColumn = secondColumn + (secondColumn - firstColumn)
+console.log(AFC_W)
+
+var trial = {
+  type: 'canvas-keyboard-response',
+  stimulus: function(c) {
+    // c.style.border = "5px solid #A9A9A9";
+    // present images on a canvas at specific locations
+    var ctx = c.getContext('2d');
+    var probe = new Image();
+    var AFC1 = new Image();
+    var AFC2 = new Image();
+    var AFC3 = new Image();
+    var AFC4 = new Image();
+    var AFC5 = new Image();
+    var AFC6 = new Image();
+    probe.src = 'stim/objects/Backpack_1_br.png';
+    AFC1.src = 'stim/scenes/Airport1.jpg';
+    AFC2.src = 'stim/scenes/Aisle1.jpg';
+    AFC3.src = 'stim/scenes/Aquarium1.jpg';
+    AFC4.src = 'stim/scenes/Arena1.jpg';
+    AFC5.src = 'stim/scenes/Avenue1.jpg';
+    AFC6.src = 'stim/scenes/Bakery1.jpg';
+    probe.addEventListener('load', function() {
+      var centerx = canvasW/2 - probeW/2
+      var centery = canvasH/2 - probeH/2
+      ctx.drawImage(probe, centerx, centery-200, probeW, probeH);
+    }, false);
+    AFC1.addEventListener('load', function() {
+      ctx.drawImage(AFC1, firstColumn, firstRow, AFC_W, AFC_H);
+      ctx.font = '20px Arial';
+      ctx.fillText('1', firstColumn+(AFC_W/2), firstRow+AFC_H+25)
+    }, false);
+    AFC2.addEventListener('load', function() {
+      ctx.drawImage(AFC2, secondColumn, firstRow, AFC_W, AFC_H);
+      ctx.font = '20px Arial';
+      ctx.fillText('2', secondColumn+(AFC_W/2), firstRow+AFC_H+25)
+    }, false);
+    AFC3.addEventListener('load', function() {
+      ctx.drawImage(AFC3, thirdColumn, firstRow, AFC_W, AFC_H);
+      ctx.font = '20px Arial';
+      ctx.fillText('3', thirdColumn+(AFC_W/2), firstRow+AFC_H+25)
+    }, false);
+    AFC4.addEventListener('load', function() {
+      ctx.drawImage(AFC4, firstColumn, secondRow, AFC_W, AFC_H);
+      ctx.font = '20px Arial';
+      ctx.fillText('4', firstColumn+(AFC_W/2), secondRow+AFC_H+25)
+    }, false);
+    AFC5.addEventListener('load', function() {
+      ctx.drawImage(AFC5, secondColumn, secondRow, AFC_W, AFC_H);
+      ctx.font = '20px Arial';
+      ctx.fillText('5', secondColumn+(AFC_W/2), secondRow+AFC_H+25)
+    }, false);
+    AFC6.addEventListener('load', function() {
+      ctx.drawImage(AFC6, thirdColumn, secondRow, AFC_W, AFC_H);
+      ctx.font = '20px Arial';
+      ctx.fillText('6', thirdColumn+(AFC_W/2), secondRow+AFC_H+25)
+    }, false);
+  },
+  canvas_size: [canvasH, canvasW],
+  prompt: "Which Scene went with this image?",
+  choices: ['1','2','3','4','5','6'],
+  trial_duration: null
+};
+
+// initialize jsPsych
+
+ jsPsych.init({
+     timeline: [trial]
+ })
+
+ </script>
+
+<!-- <div class='parent'>
+<img class="foreground" src="https://placehold.it/50" />
+</div> -->
+
+</html>

@@ -1,0 +1,152 @@
+<html>
+    <head>
+        <title>My experiment</title>
+        <script src="jspsych-6.3.0/jspsych.js"></script>
+        <script src="encoding.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response-mouse-click.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-html-keyboard-response.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-preload.js"></script>
+        <link href="jspsych-6.3.0/css/jspsych.css" rel="stylesheet" type="text/css">
+        <style>
+            .parent {
+              position: relative;
+              width: 300px;
+              height: 300px;
+              background-image: url(https://placehold.it/300);
+              border: 5px blue solid;
+            }
+            .foreground {
+              position: absolute;
+              top: 30px;
+              left: 30px;
+              border: 5px red solid;
+            }
+          </style>
+    </head>
+    <body></body>
+    <script>
+
+    var canvasW = 1200 // width of the drawing area (px)
+    var canvasH = 600 // height of the drawing area (px)
+    var objectH = 200 // height of the probe (px)
+    var objectW = 200 // width of the probe (px)
+    var sceneW = 1000 // width of the alternatives (px)
+    var sceneH = sceneW*(412/600) // height of the alternatives (px)
+    var guide_cir_r = 250; // radius of guide circle, (px)
+    var innerR = guide_cir_r - 25; // inner click area radius, (px)
+    var outerR = guide_cir_r + 25; // outer click area radius, (px)
+
+    var iti = {
+        type: 'html-keyboard-response',
+        stimulus: '<p style="font-size: 48px;">+</p>',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 1000,
+     };
+
+   var enc_trial = {
+     type: 'canvas-keyboard-response',
+     stimulus: function(c) {
+       // present images on a canvas at specific locations
+       var ctx = c.getContext('2d');
+       var object = new Image();
+       var scene = new Image();
+       object.src = jsPsych.timelineVariable('Object') //'stim/objects/Backpack_1_br.png';
+       scene.src = jsPsych.timelineVariable('Scene');
+       scene.addEventListener('load', function() {
+         var centerx = canvasW/2 - sceneW/2;
+         var centery = canvasH/2 - sceneH/2;
+         ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+         var centerx = canvasW/2 - objectW/2;
+         var centery = canvasH/2 - objectH/2;
+         ctx.drawImage(object, centerx, centery-200, objectW, objectH);
+       }, false);
+     },
+     canvas_size: [canvasH, canvasW],
+     choices: ['1','2','3','4','5','6'],
+     trial_duration: null
+   };
+
+    var recontruct_trial = {
+      type: 'canvas-keyboard-response-mouse-click',
+      images: [jsPsych.timelineVariable('Object'), jsPsych.timelineVariable('Scene')],
+      stimulus: function(c, object, scene) {
+        // canvas
+        var ctx = c.getContext('2d');
+        // draw scene
+        var centerx = canvasW/2 - sceneW/2;
+        var centery = canvasH/2 - sceneH/2;
+        ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+        // draw object
+        var centerx = canvasW/2 - objectW/2;
+        var centery = canvasH/2 - objectH/2;
+        ctx.drawImage(object, centerx, centery, objectW, objectH);
+        // draw guide circle
+        ctx.strokeStyle = 'black'
+        ctx.setLineDash([15, 15]);
+        ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
+        ctx.lineWidth = 5;
+        ctx.stroke();
+      },
+      canvas_size: [canvasH, canvasW],
+      click_area: [innerR, outerR],
+      choices: ['1','2','3','4','5','6'],
+      trial_duration: 6000
+    };
+
+    var feedback = enc_trial;
+    feedback.trial_duration = 1000;
+    feedback.stimulus = function(c){
+      // present images on a canvas at specific locations
+      var ctx = c.getContext('2d');
+      // draw scene
+      var scene = new Image();
+      scene.src = jsPsych.timelineVariable('Scene');
+      var centerx = canvasW/2 - sceneW/2;
+      var centery = canvasH/2 - sceneH/2;
+      ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+      // draw guide circle
+      ctx.strokeStyle = 'black'
+      ctx.setLineDash([15, 15]);
+      ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
+      ctx.lineWidth = 5;
+      ctx.stroke();
+      // draw object jsPsych.timelineVariable('obj_width')*.75, jsPsych.timelineVariable('obj_width')*jsPsych.timelineVariable('obj_ratio')*.75
+      var object = new Image(50,50);
+      object.src = jsPsych.timelineVariable('Object');
+      var centerx = canvasW/2 - objectW/2;
+      var centery = canvasH/2 - objectH/2;
+      var xPos = jsPsych.timelineVariable('xPos');
+      var yPos = jsPsych.timelineVariable('yPos');
+      ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
+    }
+
+    // preload stimuli
+    var scenes_to_preload
+    var objects_to_preload
+    scenes_to_preload = enc_data.map(enc_data => enc_data.Scene);
+    objects_to_preload = enc_data.map(enc_data => enc_data.Object);
+
+    var preload = {
+      type: 'preload',
+      images: scenes_to_preload.concat(objects_to_preload)
+    }
+
+    var trial_procedure = {
+      timeline: [iti, recontruct_trial, feedback],
+      timeline_variables: enc_data
+    }
+
+// initialize jsPsych
+
+ jsPsych.init({
+     timeline: [preload, trial_procedure]
+ })
+
+ </script>
+
+<!-- <div class='parent'>
+<img class="foreground" src="https://placehold.it/50" />
+</div> -->
+
+</html>
