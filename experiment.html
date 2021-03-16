@@ -6,8 +6,10 @@
         <script src="jspsych-6.3.0/plugins/jspsych-html-keyboard-response.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response-mouse-click.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-fullscreen.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-preload.js"></script>
         <script src="encoding.js"></script>
+        <script src="functions.js"></script>
         <script src="restudy.js"></script>
         <script src="retpractice.js"></script>
         <script src="retrieval.js"></script>
@@ -52,12 +54,22 @@
     var thirdColumn = secondColumn + (secondColumn - firstColumn) // position of the third column (px)
 
     // experiment wide
-
     var iti = {
         type: 'html-keyboard-response',
         stimulus: '<p style="font-size: 48px;">+</p>',
         choices: jsPsych.NO_KEYS,
         trial_duration: 1000};
+
+    // fullscreen on; fullescreen off
+    var fullscreenOn = {
+      type: 'fullscreen',
+      fullscreen_mode: true
+    }
+
+    var fullscreenOff = {
+      type: 'fullscreen',
+      fullscreen_mode: false
+    }
 
     // preload stimuli
     var scenes_to_preload
@@ -125,9 +137,8 @@
      trial_duration: 4000,
    }
 
-   var restudy_stimulus = JSON.parse(JSON.stringify(encoding_stimulus));
+   var restudy_stimulus = extend(encoding_stimulus);
    restudy_stimulus.trial_duration = 6000
-   console.log(restudy_stimulus)
 
    var restudy_trials = {
      timeline: [iti, restudy_stimulus],
@@ -173,7 +184,7 @@
      trial_duration: 6000
    };
 
-   var feedback = JSON.parse(JSON.stringify(encoding_stimulus));
+   var feedback = extend(encoding_stimulus);
    feedback.trial_duration = 1000;
    feedback.stimulus = function(c){
      // present images on a canvas at specific locations
@@ -268,7 +279,7 @@
      trial_duration: 6000
    };
 
-   var retreival_verbaitum_test = recontruct_trial
+   var retreival_verbaitum_test = extend(recontruct_trial)
 
    var retrieval_procedure = {
      timeline: [iti, retrieval_gist_test, iti, retreival_verbaitum_test],
@@ -280,7 +291,7 @@
    // initialize jsPsych
 
     jsPsych.init({
-        timeline: [preload, encoding, restudy_practice, retrieval] // restudy_practice, retrieval encoding retrieval, retrieval
+        timeline: [preload, fullscreenOn, encoding, restudy_practice, retrieval, fullscreenOff] // restudy_practice, retrieval encoding retrieval, retrieval
     })
 
   </script>
