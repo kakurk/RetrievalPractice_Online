@@ -3,6 +3,7 @@
     <head>
         <title>My experiment</title>
         <script src="jspsych-6.3.0/jspsych.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-html-keyboard-response.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response-mouse-click.js"></script>
@@ -32,6 +33,11 @@
     </head>
     <body></body>
     <script>
+
+    // ask user if they are sure they want to leave early
+    $(window).on('beforeunload', function() {
+        return "Are you sure you do not want to continue with the experiment?";
+    });
 
     // experiment wide parameters
     var canvasW = 1200 // width of the drawing area (px)
@@ -291,7 +297,31 @@
    // initialize jsPsych
 
     jsPsych.init({
-        timeline: [preload, fullscreenOn, encoding, restudy_practice, retrieval, fullscreenOff] // restudy_practice, retrieval encoding retrieval, retrieval
+        timeline: [preload, fullscreenOn, fullscreenOff, end_of_exp], // encoding, restudy_practice, retrieval
+        on_finish: function(data){
+
+          // a unique data/time string
+          // mm-dd-yyyy-hh-mm-ss
+          var today = new Date();
+          var datestring = today.getMonth() + '-' + today.getDate() + '-' + today.getFullYear() + '-' + today.getHours() + '-' + today.getMinutes() + '-' + today.getSeconds()
+
+          // Save Data w/ unique data/time string
+          saveData(datestring + '_' + urlvar.subject + "_experiment_data", jsPsych.data.get().csv());
+          saveData(datestring + '_' + urlvar.subject + "_interaction_data", jsPsych.data.getInteractionData().csv());
+
+          // Display the link so participants can give themselves SONA credit
+          var el = jsPsych.getDisplayElement();
+          var a = document.createElement('a');
+          var farewell_paragraph = document.createElement('p');
+          var farewell_text = document.createTextNode("Thank you for participating!");
+          farewell_paragraph.appendChild(farewell_text);
+          var linkText = document.createTextNode("Follow This Link To Get SONA Credit");
+          a.appendChild(linkText);
+          a.href = "https://bc.sona-systems.com/webstudy_credit.aspx?experiment_id=1127&credit_token=2d1623ee4a54413d826ed9a1b282539d&survey_code=" + urlvar.subject;
+          el.appendChild(farewell_paragraph);
+          el.appendChild(a);
+
+        }
     })
 
   </script>

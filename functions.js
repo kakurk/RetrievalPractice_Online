@@ -16,3 +16,29 @@ function extend(from, to)
 
     return to;
 }
+
+// jsPsych savedata function
+function saveData(filename, filedata){
+   $.ajax({
+      type:'post',
+      cache: false,
+      url: 'save_data.php', // this is the path to the above PHP script
+      data: {filename: filename, filedata: filedata},
+      success: function(data) {
+        if (data == "ok") {
+          console.log("Success!")
+        }
+      }
+   });
+ }
+
+ // Function for grabbing variables through the HTML file
+ function getQueryVariable(variable)  {
+     var query = window.location.search.substring(1);
+     var vars = query.split("&amp;");
+     for (var i=0;i<vars.length;i++) {
+       var pair = vars[i].split("=");
+       if (pair[0] == variable){return pair[1];}
+     }
+     alert('Query variable ' + variable + ' not found');
+   }
