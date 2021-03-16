@@ -73,16 +73,23 @@
         type: 'html-keyboard-response',
         stimulus: '<p style="font-size: 48px;">+</p>',
         choices: jsPsych.NO_KEYS,
-        trial_duration: 1000};
+        trial_duration: 1000,
+        data: { experimentComponent: 'ITI'},
+        save_trial_parameters: {
+            stimulus: false,
+            choices: false
+        }};
 
     // fullscreen on; fullescreen off
     var fullscreenOn = {
       type: 'fullscreen',
+      data: { experimentComponent: 'fullscreenUp'},
       fullscreen_mode: true
     }
 
     var fullscreenOff = {
       type: 'fullscreen',
+      data: { experimentComponent: 'fullscreenDown'},
       fullscreen_mode: false
     }
 
@@ -100,7 +107,13 @@
 
     var preload = {
      type: 'preload',
-     images: scenes_to_preload.concat(objects_to_preload)
+     data: { experimentComponent: 'preload'},
+     images: scenes_to_preload.concat(objects_to_preload),
+     save_trial_parameters: {
+         failed_audio: false,
+         failed_video: false,
+         timeout: false
+     }
     }
 
     // encoding
@@ -110,6 +123,10 @@
       stimulus: '<p style="font-size: 48px;">How Likely is the object to be found in the scene?</p><p>1- Likely 2 - Unlikely</p>',
       choices: jsPsych.NO_KEYS,
       trial_duration: 4000,
+      save_trial_parameters: {
+          stimulus: false,
+          choices: false
+      }
     };
 
     var encoding_stimulus = {
@@ -142,7 +159,7 @@
       timeline_variables: enc_data
     }
 
-    var encoding = {timeline: [enc_instruction, encoding_trials, iti]}
+    var encoding = {timeline: [enc_instruction, encoding_trials, iti], data: { experimentComponent: 'encoding'}}
 
    // Restudy
 
@@ -151,6 +168,10 @@
      stimulus: '<p style="font-size: 48px;">RESTUDY</p>',
      choices: jsPsych.NO_KEYS,
      trial_duration: 4000,
+     save_trial_parameters: {
+         stimulus: false,
+         choices: false
+     }
    }
 
    var restudy_stimulus = extend(encoding_stimulus);
@@ -170,6 +191,10 @@
      stimulus: '<p style="font-size: 48px;">PRACTICE</p>',
      choices: jsPsych.NO_KEYS,
      trial_duration: 4000,
+     save_trial_parameters: {
+         stimulus: false,
+         choices: false
+     }
    }
 
    var recontruct_trial = {
@@ -234,7 +259,7 @@
 
    var practice = {timeline: [retpractice_instructions, practice_trials]}
 
-   var restudy_practice = {timeline: [restudy, practice], repetitions: 3}
+   var restudy_practice = {timeline: [restudy, practice], repetitions: 3, data: { experimentComponent: 'practice'},}
 
    // retrieval
 
@@ -243,6 +268,10 @@
      stimulus: '<p style = "font-size: 48px;">RETREIVAL</p>',
      choices: jsPsych.NO_KEYS,
      trial_duration: 4000,
+     save_trial_parameters: {
+         stimulus: false,
+         choices: false
+     }
    }
 
    var retrieval_gist_test = {
@@ -302,12 +331,12 @@
      timeline_variables: retrieval_data
    }
 
-   var retrieval = {timeline: [retreival_instructions, retrieval_procedure]}
+   var retrieval = {timeline: [retreival_instructions, retrieval_procedure], data: { experimentComponent: 'retrieval'}}
 
    // initialize jsPsych
 
     jsPsych.init({
-        timeline: [preload, fullscreenOn, fullscreenOff], // encoding, restudy_practice, retrieval
+        timeline: [preload, fullscreenOn, retrieval, fullscreenOff], // encoding, retrieval
         on_finish: function(data){
 
           // a unique data/time string
