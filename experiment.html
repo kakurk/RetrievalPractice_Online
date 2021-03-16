@@ -39,6 +39,15 @@
         return "Are you sure you do not want to continue with the experiment?";
     });
 
+    // grabs all variables from the url
+    // url variables are specified as follows:
+    // Ex: experiment.html?subject=s001
+    // urlvar.subject = 's001'
+    var urlvar = jsPsych.data.urlVariables();
+    console.log(urlvar.subject)
+    jsPsych.data.addProperties({subject: urlvar.subject});
+
+
     // experiment wide parameters
     var canvasW = 1200 // width of the drawing area (px)
     var canvasH = 600 // height of the drawing area (px)
@@ -88,6 +97,7 @@
     scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption5))
     scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption6))
     objects_to_preload = enc_data.map(enc_data => enc_data.Object);
+
     var preload = {
      type: 'preload',
      images: scenes_to_preload.concat(objects_to_preload)
@@ -297,7 +307,7 @@
    // initialize jsPsych
 
     jsPsych.init({
-        timeline: [preload, fullscreenOn, fullscreenOff, end_of_exp], // encoding, restudy_practice, retrieval
+        timeline: [preload, fullscreenOn, fullscreenOff], // encoding, restudy_practice, retrieval
         on_finish: function(data){
 
           // a unique data/time string
@@ -306,8 +316,8 @@
           var datestring = today.getMonth() + '-' + today.getDate() + '-' + today.getFullYear() + '-' + today.getHours() + '-' + today.getMinutes() + '-' + today.getSeconds()
 
           // Save Data w/ unique data/time string
-          saveData(datestring + '_' + urlvar.subject + "_experiment_data", jsPsych.data.get().csv());
-          saveData(datestring + '_' + urlvar.subject + "_interaction_data", jsPsych.data.getInteractionData().csv());
+          //saveData(datestring + '_' + urlvar.subject + "_experiment_data", jsPsych.data.get().csv());
+          //saveData(datestring + '_' + urlvar.subject + "_interaction_data", jsPsych.data.getInteractionData().csv());
 
           // Display the link so participants can give themselves SONA credit
           var el = jsPsych.getDisplayElement();
