@@ -17,20 +17,13 @@ function extend(from, to)
     return to;
 }
 
-// jsPsych savedata function
-function saveData(filename, filedata){
-   $.ajax({
-      type:'post',
-      cache: false,
-      url: 'save_data.php', // this is the path to the above PHP script
-      data: {filename: filename, filedata: filedata},
-      success: function(data) {
-        if (data == "ok") {
-          console.log("Success!")
-        }
-      }
-   });
- }
+    function saveData(name, data){
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'write_data.php'); // 'write_data.php' is the path to the php file described above.
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify({filename: name, filedata: data}));
+    }
+
 
  // Function for grabbing variables through the HTML file
  function getQueryVariable(variable)  {
