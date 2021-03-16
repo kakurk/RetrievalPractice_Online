@@ -7,6 +7,7 @@
         <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-preload.js"></script>
         <script src="encoding.js"></script>
+        <script src="restudy.js"></script>
         <link href="jspsych-6.3.0/css/jspsych.css" rel="stylesheet" type="text/css">
         <style>
             .parent {
@@ -56,10 +57,10 @@
     // encoding
 
     var enc_instruction = {
-    type: 'html-keyboard-response',
-    stimulus: '<p style="font-size: 48px;">How Likely is the object to be found in the scene?</p><p>1- Likely 2 - Unlikely</p>',
-    choices: jsPsych.NO_KEYS,
-    trial_duration: 4000,
+      type: 'html-keyboard-response',
+      stimulus: '<p style="font-size: 48px;">How Likely is the object to be found in the scene?</p><p>1- Likely 2 - Unlikely</p>',
+      choices: jsPsych.NO_KEYS,
+      trial_duration: 4000,
     };
 
     var encoding_stimulus = {
@@ -72,17 +73,18 @@
        var scene = new Image();
        object.src = jsPsych.timelineVariable('Object');
        scene.src = jsPsych.timelineVariable('Scene');
-       scene.addEventListener('load', function() {
-         var centerx = canvasW/2 - sceneW/2;
-         var centery = canvasH/2 - sceneH/2;
-         ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
-         var centerx = canvasW/2 - objectW/2;
-         var centery = canvasH/2 - objectH/2;
-         ctx.drawImage(object, centerx, centery-200, objectW, objectH);
-       }, false);
+       var centerx = canvasW/2 - sceneW/2;
+       var centery = canvasH/2 - sceneH/2;
+       ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+       var centerx = canvasW/2 - objectW/2;
+       var centery = canvasH/2 - objectH/2;
+       var xPos = jsPsych.timelineVariable('xPos');
+       var yPos = jsPsych.timelineVariable('yPos');
+       ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
+       // ctx.drawImage(object, centerx, centery-200, objectW, objectH);
      },
      canvas_size: [canvasH, canvasW],
-     choices: ['1','2','3','4','5','6'],
+     choices: ['1','2'],
      trial_duration: 4000
     };
 
@@ -102,17 +104,12 @@
      trial_duration: 4000,
    }
 
-   var restudy_stimulus = {
-       type: 'html-keyboard-response',
-       stimulus: jsPsych.timelineVariable('image'),
-       trial_duration: 6000,
-       response_ends_trial: false,
-       choices: ['1','2'],
-   };
+   var restudy_stimulus = encoding_stimulus
+   restudy_stimulus.trial_duration = 6000
 
    var restudy_trials = {
      timeline: [iti, restudy_stimulus],
-     timeline_variables: [{image: undefined}, {image: undefined}],
+     timeline_variables: restudy_data,
    }
 
    var restudy = {timeline: [restudy_instructions, restudy_trials]}
@@ -173,7 +170,7 @@
    // initialize jsPsych
 
     jsPsych.init({
-        timeline: [preload, encoding] // restudy_practice
+        timeline: [preload, restudy] // restudy_practice
     })
 
     </script>
