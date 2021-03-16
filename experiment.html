@@ -10,6 +10,7 @@
         <script src="encoding.js"></script>
         <script src="restudy.js"></script>
         <script src="retpractice.js"></script>
+        <script src="retrieval.js"></script>
         <link href="jspsych-6.3.0/css/jspsych.css" rel="stylesheet" type="text/css">
         <style>
             .parent {
@@ -37,9 +38,18 @@
     var objectW = 150 // width of the object (px)
     var sceneW = 1000 // width of the scene (px)
     var sceneH = sceneW*(412/600) // height of the scene (px)
+    // Reconstruction
     var guide_cir_r = 250; // radius of guide circle, (px)
     var innerR = guide_cir_r - 25; // inner click area radius, (px)
     var outerR = guide_cir_r + 25; // outer click area radius, (px)
+    // 6 AFC
+    var AFC_H = 125 // height of the alternatives (px)
+    var AFC_W = AFC_H * 600/412 // width of the alternatives (px)
+    var firstRow = 250 // position of the first row (px)
+    var secondRow = 425 // position of the second row (px)
+    var firstColumn = 300 // position of the first column (px)
+    var secondColumn = canvasW/2 - AFC_W/2 // position of the second column (px)
+    var thirdColumn = secondColumn + (secondColumn - firstColumn) // position of the third column (px)
 
     // experiment wide
 
@@ -53,6 +63,12 @@
     var scenes_to_preload
     var objects_to_preload
     scenes_to_preload = enc_data.map(enc_data => enc_data.Scene);
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption1))
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption2))
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption3))
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption4))
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption5))
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption6))
     objects_to_preload = enc_data.map(enc_data => enc_data.Object);
     var preload = {
      type: 'preload',
@@ -86,11 +102,11 @@
        var xPos = jsPsych.timelineVariable('xPos');
        var yPos = jsPsych.timelineVariable('yPos');
        ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
-       // ctx.drawImage(object, centerx, centery-200, objectW, objectH);
      },
      canvas_size: [canvasH, canvasW],
      choices: ['1','2'],
-     trial_duration: 4000
+     trial_duration: 4000,
+     response_ends_trial: false
     };
 
     var encoding_trials = {
@@ -109,8 +125,9 @@
      trial_duration: 4000,
    }
 
-   var restudy_stimulus = encoding_stimulus
+   var restudy_stimulus = JSON.parse(JSON.stringify(encoding_stimulus));
    restudy_stimulus.trial_duration = 6000
+   console.log(restudy_stimulus)
 
    var restudy_trials = {
      timeline: [iti, restudy_stimulus],
@@ -151,11 +168,12 @@
      },
      canvas_size: [canvasH, canvasW],
      click_area: [innerR, outerR],
-     choices: ['1','2','3','4','5','6'],
+     choices: ['1','2'],
+     response_ends_trial: false,
      trial_duration: 6000
    };
 
-   var feedback = encoding_stimulus;
+   var feedback = JSON.parse(JSON.stringify(encoding_stimulus));
    feedback.trial_duration = 1000;
    feedback.stimulus = function(c){
      // present images on a canvas at specific locations
@@ -201,25 +219,70 @@
    }
 
    var retrieval_gist_test = {
-     type: 'html-keyboard-response',
-     stimulus: '',
+     type: 'canvas-keyboard-response',
+     stimulus: function(c) {
+       // c.style.border = "5px solid #A9A9A9";
+       // present images on a canvas at specific locations
+       var ctx = c.getContext('2d');
+       var probe = new Image();
+       var AFC1 = new Image();
+       var AFC2 = new Image();
+       var AFC3 = new Image();
+       var AFC4 = new Image();
+       var AFC5 = new Image();
+       var AFC6 = new Image();
+       probe.src = jsPsych.timelineVariable('Object');
+       AFC1.src = jsPsych.timelineVariable('RespOption1');
+       AFC2.src = jsPsych.timelineVariable('RespOption2');
+       AFC3.src = jsPsych.timelineVariable('RespOption3');
+       AFC4.src = jsPsych.timelineVariable('RespOption4');
+       AFC5.src = jsPsych.timelineVariable('RespOption5');
+       AFC6.src = jsPsych.timelineVariable('RespOption6');
+       var centerx = canvasW/2 - objectW/2
+       var centery = canvasH/2 - objectH/2
+       ctx.drawImage(probe, centerx, centery-200, objectW, objectH);
 
+       ctx.drawImage(AFC1, firstColumn, firstRow, AFC_W, AFC_H);
+       ctx.font = '20px Arial';
+       ctx.fillText('1', firstColumn+(AFC_W/2), firstRow+AFC_H+25)
+
+       ctx.drawImage(AFC2, secondColumn, firstRow, AFC_W, AFC_H);
+       ctx.fillText('2', secondColumn+(AFC_W/2), firstRow+AFC_H+25)
+
+       ctx.drawImage(AFC3, thirdColumn, firstRow, AFC_W, AFC_H);
+       ctx.fillText('3', thirdColumn+(AFC_W/2), firstRow+AFC_H+25)
+
+       ctx.drawImage(AFC4, firstColumn, secondRow, AFC_W, AFC_H);
+       ctx.fillText('4', firstColumn+(AFC_W/2), secondRow+AFC_H+25)
+
+       ctx.drawImage(AFC5, secondColumn, secondRow, AFC_W, AFC_H);
+       ctx.fillText('5', secondColumn+(AFC_W/2), secondRow+AFC_H+25)
+
+       ctx.drawImage(AFC6, thirdColumn, secondRow, AFC_W, AFC_H);
+       ctx.fillText('6', thirdColumn+(AFC_W/2), secondRow+AFC_H+25)
+     },
+     canvas_size: [canvasH, canvasW],
+     prompt: null,
+     choices: ['1','2','3','4','5','6'],
+     response_ends_trial: false,
+     trial_duration: 6000
+   };
+
+   var retreival_verbaitum_test = recontruct_trial
+
+   var retrieval_procedure = {
+     timeline: [iti, retrieval_gist_test, iti, retreival_verbaitum_test],
+     timeline_variables: retrieval_data
    }
 
-   var retreival_verbaitum_test = {
-
-   }
+   var retrieval = {timeline: [retreival_instructions, retrieval_procedure]}
 
    // initialize jsPsych
 
     jsPsych.init({
-        timeline: [preload, practice] // restudy_practice
+        timeline: [preload, encoding, restudy_practice, retrieval] // restudy_practice, retrieval encoding retrieval, retrieval
     })
 
-    </script>
-
-<!-- <div class='parent'>
-  <img class="foreground" src="https://placehold.it/50" />
-</div> -->
+  </script>
 
 </html>
