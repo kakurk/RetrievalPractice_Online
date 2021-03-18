@@ -7,6 +7,7 @@
         <script src="jspsych-6.3.0/plugins/jspsych-html-keyboard-response.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response-mouse-click.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-instructions.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-fullscreen.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-preload.js"></script>
         <script src="encoding.js"></script>
@@ -18,16 +19,65 @@
         <style>
             .parent {
               position: relative;
-              width: 300px;
-              height: 300px;
-              background-image: url(https://placehold.it/300);
-              border: 5px blue solid;
+              width: 800px;
+              height: 549px;
+              margin-left: auto;
+              margin-right: auto;
+              background-image: url("stim/scenes/DiningRoom2.jpg");
+              background-size: 100%;
+              /* border: 5px blue solid; */
+            }
+            .imageResize{
+              width: 800px;
+              height: 549px;
+            }
+            .parent_recon {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              width: 800px;
+              height: 549px;
+              margin-left: auto;
+              margin-right: auto;
+              background-image: url("stim/scenes/DiningRoom2.jpg");
+              background-size: 100%;
             }
             .foreground {
               position: absolute;
-              top: 30px;
-              left: 30px;
-              border: 5px red solid;
+              top: 150px;
+              left: 150px;
+              width: 150px;
+              height: 150px;
+              /* border: 5px red solid; */
+            }
+            .foreground_recon {
+              width: 150px;
+              height: 150px;
+              /* border: 5px red solid; */
+            }
+            .resp1 {
+              float: left;
+              padding: 15px;
+              width: 200px;
+            }
+            .resp2 {
+              float: right;
+              padding: 15px;
+              width: 200px;
+            }
+            .jspsych-instructions-nav {
+              clear: both
+            }
+            .resp_opt_div {
+              width: 800px;
+              margin-left: auto;
+              margin-right: auto;
+            }
+            .HeaderText {
+              width: 800px;
+              padding: 15px;
+              margin-left: auto;
+              margin-right: auto;
             }
           </style>
     </head>
@@ -46,7 +96,6 @@
     var urlvar = jsPsych.data.urlVariables();
     console.log(urlvar.subject)
     jsPsych.data.addProperties({subject: urlvar.subject});
-
 
     // experiment wide parameters
     var canvasW = 1200 // width of the drawing area (px)
@@ -116,17 +165,23 @@
      }
     }
 
-    // encoding
+    var stimulus_example = "<div class='parent'><img class='foreground' src='stim/objects/Volleyball_2_br.png' /></div>"
+    // var recon_example =  "<div class='parent_recon'><img class='foreground_recon' src='stim/objects/Volleyball_2_br.png' /></div>"
+    var response_option_div = "<div class='resp_opt_div'><div class='resp1'>1- Likely</div><div class='resp2'>2- Unlikely</div></div>"
+    var recon_example = '<img class="imageResize" src="ReconstructionExample_nocross.png"></img>'
+    var recon_example_cross = '<img class="imageResize" src="ReconstructionExample_withcross.PNG"></img>' //
+    var gist_test_example = '<img class="imageResize" src="Retrieval_GistTestExample.png"></img>'
 
     var enc_instruction = {
-      type: 'html-keyboard-response',
-      stimulus: '<p style="font-size: 48px;">How Likely is the object to be found in the scene?</p><p>1- Likely 2 - Unlikely</p>',
-      choices: jsPsych.NO_KEYS,
-      trial_duration: 4000,
-      save_trial_parameters: {
-          stimulus: false,
-          choices: false
-      }
+      type: 'instructions',
+      pages: ['<div class="HeaderText"><p>Welcome to the experiment.</p><p>Click next to advance.</p></div>',
+              '<div class="HeaderText">In the following encoding phase of the experiment, you will be presented with an object placed on top of a background scene:</div>'+stimulus_example,
+              '<div class="HeaderText">'+'You will be asked on each trial to determine how likely the object is to be found in its specific position withn the scene.'+
+              ' Press the <b>1 key at the top of the keyboard</b> if you think the object is <i>likely</i> to be found in its specific position within the scene. '+
+              'Press the <b>2 key at the top of the keyboard</b> if you think the object is <i>unlikey</i> to be found in its specific position within the scene.'+
+              '</div>'+stimulus_example+response_option_div,
+              '<div class="HeaderText"><p>You will be presented with 40 object-image pairs.</p><p>The encoding phase will take approximately 8 minutes to complete</p><p>Click next to begin.</p></div>'],
+      show_clickable_nav: true
     };
 
     var encoding_stimulus = {
@@ -187,15 +242,15 @@
    // Practice
 
    var retpractice_instructions = {
-     type: 'html-keyboard-response',
-     stimulus: '<p style="font-size: 48px;">PRACTICE</p>',
-     choices: jsPsych.NO_KEYS,
-     trial_duration: 4000,
-     save_trial_parameters: {
-         stimulus: false,
-         choices: false
-     }
-   }
+     type: 'instructions',
+     pages: ['<div class="HeaderText"><p>You completed the encoding phase.</p><p>You will now complete the practice phase.</p><p>Click next to advance.</p></div>',
+             '<div class="HeaderText"><p>In the following practice phase of the experiment, you will be represented with the objects and scenes from the encoding phase.</p><p>You will be asked on each trial to EITHER restudy the object and scene pair OR to report the position that the object was shown on the scene.</p></div>',
+             '<div class="HeaderText">On study trials, you will simply be represented with the original object scene pairing. Your task it to commit the object-scene pair to memory. No response is required.</div>'+stimulus_example,
+             '<div class="HeaderText">On practice trials, you will be presented with an object/scene pair with the object presented in the center of the screen. You are tasked with indicating the position that the object was on the scene using your mouse.</div>'+recon_example,
+             '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the back dashed circle. When a response is recorded, a white X will appear at your responded location.</div>'+recon_example_cross,
+             '<div class="HeaderText"><p>You will complete 3 rounds of restudy and retrieval.</p><p>In total, this practice phase will take approximately 16 minutes to complete.</p><p>Click next to begin.</p></div>'],
+     show_clickable_nav: true
+   };
 
    var recontruct_trial = {
      type: 'canvas-keyboard-response-mouse-click',
@@ -254,7 +309,7 @@
 
    var practice_trials = {
      timeline: [iti, recontruct_trial, feedback],
-     timeline_variables: enc_data
+     timeline_variables: retpractice_data
    }
 
    var practice = {timeline: [retpractice_instructions, practice_trials]}
@@ -262,17 +317,16 @@
    var restudy_practice = {timeline: [restudy, practice], repetitions: 3, data: { experimentComponent: 'practice'},}
 
    // retrieval
-
    var retreival_instructions = {
-     type: 'html-keyboard-response',
-     stimulus: '<p style = "font-size: 48px;">RETREIVAL</p>',
-     choices: jsPsych.NO_KEYS,
-     trial_duration: 4000,
-     save_trial_parameters: {
-         stimulus: false,
-         choices: false
-     }
-   }
+     type: 'instructions',
+     pages: ['<div class="HeaderText"><p>You completed the practice phase.</p><p>You will now complete the retrieval phase.</p><p>Click next to advance.</p></div>',
+             '<div class="HeaderText"><p>In the following retrieval phase of the experiment, you will be represented with the object/scene pairs from the encoding phase.</p><p>On each trial, you will be asked to identify which scene went with each object using a multiple choice test. Immediately afterwards, you will be asked to indicate where the object was placed on top of its scene.</p></div>',
+             '<div class="HeaderText">For the scene memory test, you will be represented with an object from the encoding phase along with 6 scene options. Use the 1 through 6 keys at the top of the keyboard to indicate which scene was paired with the object.</div>'+gist_test_example,
+             '<div class="HeaderText">For the location memory test, you will be presented with an object/scene pair with the object presented in the center of the screen. You are tasked with indicating the position that the object was on the scene using your mouse.</div>'+recon_example,
+             '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the back dashed circle. When a response is recorded, a white X will appear at your responded location.</div>'+recon_example_cross,
+             '<div class="HeaderText"><p>In total, this retreival phase will take approximately 6 minutes to complete.</p><p>Click next when you are ready to begin.</p></div>'],
+     show_clickable_nav: true
+   };
 
    var retrieval_gist_test = {
      type: 'canvas-keyboard-response',
@@ -336,7 +390,7 @@
    // initialize jsPsych
 
     jsPsych.init({
-        timeline: [preload, fullscreenOn, retrieval, fullscreenOff], // encoding, retrieval
+        timeline: [preload, fullscreenOn, encoding, restudy_practice, retrieval, fullscreenOff], // encoding, retrieval
         on_finish: function(data){
 
           // a unique data/time string
