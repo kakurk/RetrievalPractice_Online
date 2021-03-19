@@ -109,11 +109,11 @@
     var innerR = guide_cir_r - 25; // inner click area radius, (px)
     var outerR = guide_cir_r + 25; // outer click area radius, (px)
     // 6 AFC
-    var AFC_H = 125 // height of the alternatives (px)
+    var AFC_H = 150 // height of the alternatives (px)
     var AFC_W = AFC_H * 600/412 // width of the alternatives (px)
-    var firstRow = 250 // position of the first row (px)
+    var firstRow = 225 // position of the first row (px)
     var secondRow = 425 // position of the second row (px)
-    var firstColumn = 300 // position of the first column (px)
+    var firstColumn = 250 // position of the first column (px)
     var secondColumn = canvasW/2 - AFC_W/2 // position of the second column (px)
     var thirdColumn = secondColumn + (secondColumn - firstColumn) // position of the third column (px)
 
@@ -123,7 +123,7 @@
         stimulus: '<p style="font-size: 48px;">+</p>',
         choices: jsPsych.NO_KEYS,
         trial_duration: 1000,
-        data: { experimentComponent: 'ITI', trialType = 'ITI'},
+        data: { experimentComponent: 'ITI', trialType: 'ITI'},
         save_trial_parameters: {
             stimulus: false,
             choices: false
@@ -207,7 +207,7 @@
      choices: ['1','2'],
      trial_duration: 4000,
      response_ends_trial: false,
-     data: {trialType = 'encoding_trial'}
+     data: {trialType: 'encoding_trial'}
     };
 
     var encoding_trials = {
@@ -265,7 +265,7 @@
          stimulus: false,
          choices: false
      },
-     data = {trialType: 'Retrieval Cue Screen'}
+     data: {trialType: 'Retrieval Cue Screen'}
    }
 
    var recontruct_trial = {
@@ -409,7 +409,7 @@
 
    // initialize jsPsych
     jsPsych.init({
-        timeline: [preload, fullscreenOn, restudy_practice_all, retrieval, fullscreenOff], // encoding, retrieval
+        timeline: [preload, retrieval_procedure], // fullscreenOn fullscreenOff encoding, retrieval, restudy_practice_all
         on_finish: function(data){
 
           // a unique data/time string
