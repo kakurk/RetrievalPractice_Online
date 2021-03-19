@@ -7,3 +7,4 @@ retrieval.js
 *.PNG
 .Rproj.user
 *.Rproj
+.Rhistory
