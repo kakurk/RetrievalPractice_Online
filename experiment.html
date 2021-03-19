@@ -216,6 +216,18 @@
 
     var encoding = {timeline: [enc_instruction, encoding_trials, iti], data: { experimentComponent: 'encoding'}}
 
+    // practice phase
+    var retpractice_instructions = {
+      type: 'instructions',
+      pages: ['<div class="HeaderText"><p>You completed the encoding phase.</p><p>You will now complete the practice phase.</p><p>Click next to advance.</p></div>',
+              '<div class="HeaderText"><p>In the following practice phase of the experiment, you will be represented with the objects and scenes from the encoding phase.</p><p>You will be asked on each trial to EITHER restudy the object and scene pair OR to report the position that the object was shown on the scene.</p></div>',
+              '<div class="HeaderText">On study trials, you will simply be represented with the original object scene pairing. Your task it to commit the object-scene pair to memory. No response is required.</div>'+stimulus_example,
+              '<div class="HeaderText">On practice trials, you will be presented with an object/scene pair with the object presented in the center of the screen. You are tasked with indicating the position that the object was on the scene using your mouse.</div>'+recon_example,
+              '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the back dashed circle. When a response is recorded, a white X will appear at your responded location.</div>'+recon_example_cross,
+              '<div class="HeaderText"><p>You will complete 3 rounds of restudy and retrieval.</p><p>In total, this practice phase will take approximately 16 minutes to complete.</p><p>Click next to begin.</p></div>'],
+      show_clickable_nav: true
+    };
+
    // Restudy
 
    var restudy_instructions = {
@@ -241,16 +253,16 @@
 
    // Practice
 
-   var retpractice_instructions = {
-     type: 'instructions',
-     pages: ['<div class="HeaderText"><p>You completed the encoding phase.</p><p>You will now complete the practice phase.</p><p>Click next to advance.</p></div>',
-             '<div class="HeaderText"><p>In the following practice phase of the experiment, you will be represented with the objects and scenes from the encoding phase.</p><p>You will be asked on each trial to EITHER restudy the object and scene pair OR to report the position that the object was shown on the scene.</p></div>',
-             '<div class="HeaderText">On study trials, you will simply be represented with the original object scene pairing. Your task it to commit the object-scene pair to memory. No response is required.</div>'+stimulus_example,
-             '<div class="HeaderText">On practice trials, you will be presented with an object/scene pair with the object presented in the center of the screen. You are tasked with indicating the position that the object was on the scene using your mouse.</div>'+recon_example,
-             '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the back dashed circle. When a response is recorded, a white X will appear at your responded location.</div>'+recon_example_cross,
-             '<div class="HeaderText"><p>You will complete 3 rounds of restudy and retrieval.</p><p>In total, this practice phase will take approximately 16 minutes to complete.</p><p>Click next to begin.</p></div>'],
-     show_clickable_nav: true
-   };
+   var practice_instructions = {
+     type: 'html-keyboard-response',
+     stimulus: '<p style="font-size: 48px;">RETRIEVAL</p>',
+     choices: jsPsych.NO_KEYS,
+     trial_duration: 4000,
+     save_trial_parameters: {
+         stimulus: false,
+         choices: false
+     }
+   }
 
    var recontruct_trial = {
      type: 'canvas-keyboard-response-mouse-click',
@@ -312,9 +324,11 @@
      timeline_variables: retpractice_data
    }
 
-   var practice = {timeline: [retpractice_instructions, practice_trials]}
+   var practice = {timeline: [practice_instructions, practice_trials]}
 
-   var restudy_practice = {timeline: [restudy, practice], repetitions: 3, data: { experimentComponent: 'practice'},}
+   var restudy_practice = {timeline: [restudy, practice], repetitions: 3}
+
+   var restudy_practice_all = {timeline: [retpractice_instructions, restudy_practice],  data: { experimentComponent: 'practice'}}
 
    // retrieval
    var retreival_instructions = {
@@ -388,9 +402,8 @@
    var retrieval = {timeline: [retreival_instructions, retrieval_procedure], data: { experimentComponent: 'retrieval'}}
 
    // initialize jsPsych
-
     jsPsych.init({
-        timeline: [preload, fullscreenOn, encoding, restudy_practice, retrieval, fullscreenOff], // encoding, retrieval
+        timeline: [preload, fullscreenOn, restudy_practice_all, retrieval, fullscreenOff], // encoding, retrieval
         on_finish: function(data){
 
           // a unique data/time string
