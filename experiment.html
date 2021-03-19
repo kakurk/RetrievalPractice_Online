@@ -187,8 +187,6 @@
     var encoding_stimulus = {
      type: 'canvas-keyboard-response',
      stimulus: function(c) {
-       // c.style.border = "5px solid #A9A9A9";
-       // present images on a canvas at specific locations
        var ctx = c.getContext('2d');
        var object = new Image();
        var scene = new Image();
@@ -256,6 +254,33 @@
    }
 
    var restudy_stimulus = extend(encoding_stimulus);
+   restudy_stimulus.stimulus = function(c) {
+
+     var ctx = c.getContext('2d');
+
+     // draw scene
+     var scene = new Image();
+     scene.src = jsPsych.timelineVariable('Scene');
+     var centerx = canvasW/2 - sceneW/2;
+     var centery = canvasH/2 - sceneH/2;
+     ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+
+     // draw guide circle
+     ctx.strokeStyle = 'black'
+     ctx.setLineDash([15, 15]);
+     ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
+     ctx.lineWidth = 5;
+     ctx.stroke();
+
+     // draw object
+     var object = new Image();
+     object.src = jsPsych.timelineVariable('Object');
+     var centerx = canvasW/2 - objectW/2;
+     var centery = canvasH/2 - objectH/2;
+     var xPos = jsPsych.timelineVariable('xPos');
+     var yPos = jsPsych.timelineVariable('yPos');
+     ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
+   },
    restudy_stimulus.trial_duration = 6000
    restudy_stimulus.data.trialType = 'restudy_trial'
 
