@@ -123,7 +123,7 @@
         stimulus: '<p style="font-size: 48px;">+</p>',
         choices: jsPsych.NO_KEYS,
         trial_duration: 1000,
-        data: { experimentComponent: 'ITI'},
+        data: { experimentComponent: 'ITI', trialType = 'ITI'},
         save_trial_parameters: {
             stimulus: false,
             choices: false
@@ -206,7 +206,8 @@
      canvas_size: [canvasH, canvasW],
      choices: ['1','2'],
      trial_duration: 4000,
-     response_ends_trial: false
+     response_ends_trial: false,
+     data: {trialType = 'encoding_trial'}
     };
 
     var encoding_trials = {
@@ -238,11 +239,13 @@
      save_trial_parameters: {
          stimulus: false,
          choices: false
-     }
+     },
+     data: {trialType: 'Restudy Cue Screen'}
    }
 
    var restudy_stimulus = extend(encoding_stimulus);
    restudy_stimulus.trial_duration = 6000
+   restudy_stimulus.data.trialType = 'restudy_trial'
 
    var restudy_trials = {
      timeline: [iti, restudy_stimulus],
@@ -261,7 +264,8 @@
      save_trial_parameters: {
          stimulus: false,
          choices: false
-     }
+     },
+     data = {trialType: 'Retrieval Cue Screen'}
    }
 
    var recontruct_trial = {
@@ -289,7 +293,8 @@
      click_area: [innerR, outerR],
      choices: ['1','2'],
      response_ends_trial: false,
-     trial_duration: 6000
+     trial_duration: 6000,
+     data: {trialType: 'retrieval_trial'}
    };
 
    var feedback = extend(encoding_stimulus);
@@ -318,6 +323,7 @@
      var yPos = jsPsych.timelineVariable('yPos');
      ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
    }
+   feedback.data.trialType = 'feedback'
 
    var practice_trials = {
      timeline: [iti, recontruct_trial, feedback],
