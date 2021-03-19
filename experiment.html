@@ -333,7 +333,7 @@
      },
      canvas_size: [canvasH, canvasW],
      click_area: [innerR, outerR],
-     choices: ['1','2'],
+     choices: [' '],
      response_ends_trial: false,
      trial_duration: 6000,
      data: {trialType: 'retrieval_trial'}
@@ -440,11 +440,14 @@
      canvas_size: [canvasH, canvasW],
      prompt: null,
      choices: ['1','2','3','4','5','6'],
-     response_ends_trial: false,
-     trial_duration: 6000
+     response_ends_trial: true,
+     trial_duration: null
    };
 
    var final_verbaitum_test = extend(recontruct_trial)
+   final_verbaitum_test.response_ends_trial = true
+   final_verbaitum_test.trial_duration = null
+   final_verbaitum_test.prompt = 'Press Spacebar to lock-in your response.'
 
    var final_test_procedure = {
      timeline: [iti, final_gist_test, iti, final_verbaitum_test],
