@@ -178,12 +178,12 @@
     var enc_instruction = {
       type: 'instructions',
       pages: ['<div class="HeaderText"><p>Welcome to the experiment.</p><p>Click next to advance.</p></div>',
-              '<div class="HeaderText">In the following encoding phase of the experiment, you will be presented with an object placed on top of a background scene:</div>'+stimulus_example,
+              '<div class="HeaderText">In the following Encoding Phase of the experiment, you will be presented with an object placed on top of a background scene:</div>'+stimulus_example,
               '<div class="HeaderText">'+'You will be asked on each trial to determine how likely the object is to be found in its specific position withn the scene.'+
               ' Press the <b>1 key at the top of the keyboard</b> if you think the object is <i>likely</i> to be found in its specific position within the scene. '+
               'Press the <b>2 key at the top of the keyboard</b> if you think the object is <i>unlikey</i> to be found in its specific position within the scene.'+
               '</div>'+stimulus_example+response_option_div,
-              '<div class="HeaderText"><p>You will be presented with 40 object-image pairs.</p><p>The encoding phase will take approximately 8 minutes to complete</p><p>Click next to begin.</p></div>'],
+              '<div class="HeaderText"><p>You will be presented with 40 object-image pairs.</p><p>The Encoding Phase will take approximately 8 minutes to complete.</p><p>Click next to begin.</p></div>'],
       show_clickable_nav: true
     };
 
@@ -219,15 +219,15 @@
     var encoding = {timeline: [enc_instruction, encoding_trials, iti], data: { experimentComponent: 'encoding'}}
 
     // practice phase
-    var retpractice_instructions = {
+    var practice_phase_instructions = {
       type: 'instructions',
-      pages: ['<div class="HeaderText"><p>You completed the encoding phase.</p><p>You will now complete the practice phase.</p><p>Click next to advance.</p></div>',
-              '<div class="HeaderText"><p>In the following practice phase of the experiment, you will be represented with the objects and scenes from the encoding phase.</p><p>You will be asked on each trial to EITHER restudy the object and scene pair OR to report the position that the object was shown on the scene.</p></div>',
-              '<div class="HeaderText">On study trials, you will simply be represented with the original object scene pairing. Your task it to commit the object-scene pair to memory. No response is required.</div>'+stimulus_example,
+      pages: ['<div class="HeaderText"><p>You completed the Encoding Phase.</p><p>You will now complete the Practice Phase.</p><p>Click next to advance.</p></div>',
+              '<div class="HeaderText"><p>In the following Practice Phase of the experiment, you will be represented with the objects and scenes from the Encoding Phase.</p><p>You will be asked on each trial to EITHER restudy the object and scene pair OR to report the position that the object was shown on the scene.</p></div>',
+              '<div class="HeaderText">On restudy trials, you will simply be represented with the original object scene pairing. Your task it to commit the object-scene pair to memory. No response is required.</div>'+stimulus_example,
               '<div class="HeaderText">On retrieval trials, you will be presented with an object/scene pair with the object presented in the center of the screen. You are tasked with indicating the position that the object was on the scene using your mouse.</div>'+recon_example,
-              '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the back dashed circle. When a response is recorded, a white X will appear at your responded location.</div>'+recon_example_cross,
+              '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the white circle. When a response is recorded, a black X will appear at your responded location.</div>'+recon_example_cross,
               '<div class="HeaderText">Retrieval trials will also provide you feedback on your reponse, by briefly showing you the correct position the object took from encoding. </div>'+recon_example_cross,
-              '<div class="HeaderText"><p>You will complete 3 rounds of restudy and retrieval and will be given a chance to take a break in between each round.</p>You will complete restudy and retrieval trials in blocks of 20 trials. Each block will be cued with a screen.<p></p><p>In total, this practice phase will take approximately 16 minutes to complete.</p><p>Click next to begin.</p></div>'],
+              '<div class="HeaderText"><p>You will complete 3 rounds of restudy and retrieval and will be given a chance to take a break in between each round.</p>You will complete restudy and retrieval trials in blocks of 20 trials. Each block will be cued with a screen.<p></p><p>In total, the Practice Phase will take approximately 16 minutes to complete.</p><p>Click next to begin.</p></div>'],
       show_clickable_nav: true
     };
 
@@ -293,9 +293,9 @@
 
    var restudy = {timeline: [restudy_instructions, restudy_trials]}
 
-   // Practice
+   // Retrieval
 
-   var practice_instructions = {
+   var retrieval_instructions = {
      type: 'html-keyboard-response',
      stimulus: '<p style="font-size: 48px;">RETRIEVAL</p>',
      choices: jsPsych.NO_KEYS,
@@ -367,34 +367,34 @@
      var xPos = jsPsych.timelineVariable('xPos');
      var yPos = jsPsych.timelineVariable('yPos');
      ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
-     
+
    }
    feedback.data.trialType = 'feedback'
 
-   var practice_trials = {
+   var retrieval_trials = {
      timeline: [iti, recontruct_trial, feedback],
      timeline_variables: retpractice_data
    }
 
-   var practice = {timeline: [practice_instructions, practice_trials]}
+   var retreival = {timeline: [retrieval_instructions, retrieval_trials]}
 
-   var restudy_practice = {timeline: [restudy, practice, take_a_break], repetitions: 3}
+   var restudy_retrieval = {timeline: [restudy, retreival, take_a_break], repetitions: 3}
 
-   var restudy_practice_all = {timeline: [retpractice_instructions, restudy_practice],  data: { experimentComponent: 'practice'}}
+   var restudy_retrieval_all = {timeline: [practice_phase_instructions, restudy_retrieval],  data: { experimentComponent: 'practice'}}
 
    // retrieval
-   var retreival_instructions = {
+   var final_test_instructions = {
      type: 'instructions',
-     pages: ['<div class="HeaderText"><p>You completed the practice phase.</p><p>You will now complete the retrieval phase.</p><p>Click next to advance.</p></div>',
-             '<div class="HeaderText"><p>In the following retrieval phase of the experiment, you will be represented with the object/scene pairs from the encoding phase.</p><p>On each trial, you will be asked to identify which scene went with each object using a multiple choice test. Immediately afterwards, you will be asked to indicate where the object was placed on top of its scene.</p></div>',
-             '<div class="HeaderText">For the scene memory test, you will be represented with an object from the encoding phase along with 6 scene options. Use the 1 through 6 keys at the top of the keyboard to indicate which scene was paired with the object.</div>'+gist_test_example,
+     pages: ['<div class="HeaderText"><p>You completed the Practice Phase.</p><p>You will now complete the Final Test Phase.</p><p>Click next to advance.</p></div>',
+             '<div class="HeaderText"><p>In the following Final Test Phase of the experiment, you will be represented with the object/scene pairs from the Encoding Phase.</p><p>On each trial, you will be asked to identify which scene went with each object using a multiple choice test. Immediately afterwards, you will be asked to indicate where the object was placed on top of its scene.</p></div>',
+             '<div class="HeaderText">For the multiple choice test, you will be represented with an object from the encoding phase along with 6 scene options. Use the <b>1 through 6 keys at the top of the keyboard</b> to indicate which scene was paired with the object.</div>'+gist_test_example,
              '<div class="HeaderText">For the location memory test, you will be presented with an object/scene pair with the object presented in the center of the screen. You are tasked with indicating the position that the object was on the scene using your mouse.</div>'+recon_example,
-             '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the back dashed circle. When a response is recorded, a white X will appear at your responded location.</div>'+recon_example_cross,
-             '<div class="HeaderText"><p>In total, this retreival phase will take approximately 6 minutes to complete.</p><p>Click next when you are ready to begin.</p></div>'],
+             '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the white circle. When a response is recorded, a black X will appear at your responded location.</div>'+recon_example_cross,
+             '<div class="HeaderText"><p>In total, this Final Test Phase will take approximately 6 minutes to complete.</p><p>Click next when you are ready to begin.</p></div>'],
      show_clickable_nav: true
    };
 
-   var retrieval_gist_test = {
+   var final_gist_test = {
      type: 'canvas-keyboard-response',
      stimulus: function(c) {
        // c.style.border = "5px solid #A9A9A9";
@@ -444,18 +444,18 @@
      trial_duration: 6000
    };
 
-   var retreival_verbaitum_test = extend(recontruct_trial)
+   var final_verbaitum_test = extend(recontruct_trial)
 
-   var retrieval_procedure = {
-     timeline: [iti, retrieval_gist_test, iti, retreival_verbaitum_test],
+   var final_test_procedure = {
+     timeline: [iti, final_gist_test, iti, final_verbaitum_test],
      timeline_variables: retrieval_data
    }
 
-   var retrieval = {timeline: [retreival_instructions, retrieval_procedure], data: { experimentComponent: 'retrieval'}}
+   var final_test = {timeline: [final_test_instructions, final_test_procedure], data: { experimentComponent: 'final_test'}}
 
    // initialize jsPsych
     jsPsych.init({
-        timeline: [preload, restudy_practice_all], // fullscreenOn fullscreenOff encoding, retrieval, restudy_practice_all
+        timeline: [preload, final_test], // fullscreenOn fullscreenOff encoding, retrieval, restudy_practice_all
         on_finish: function(data){
 
           // a unique data/time string
