@@ -106,7 +106,7 @@
     var sceneH = sceneW*(412/600) // height of the scene (px)
 
     // Reconstruction
-    var guide_cir_r = 250; // radius of guide circle, (px)
+    var guide_cir_r = 225; // radius of guide circle, (px)
     var innerR = guide_cir_r - 25; // inner click area radius, (px)
     var outerR = guide_cir_r + 25; // outer click area radius, (px)
     var circleThick = 2.5; // the thickness of the guide circle (px)
@@ -458,7 +458,7 @@
 
    // initialize jsPsych
     jsPsych.init({
-        timeline: [preload, final_test], // fullscreenOn fullscreenOff encoding, retrieval, restudy_practice_all
+        timeline: [preload, fullscreenOn, encoding, restudy_retrieval_all, final_test, fullscreenOff],
         on_finish: function(data){
 
           // a unique data/time string
