@@ -104,10 +104,13 @@
     var objectW = 150 // width of the object (px)
     var sceneW = 1000 // width of the scene (px)
     var sceneH = sceneW*(412/600) // height of the scene (px)
+
     // Reconstruction
     var guide_cir_r = 250; // radius of guide circle, (px)
     var innerR = guide_cir_r - 25; // inner click area radius, (px)
     var outerR = guide_cir_r + 25; // outer click area radius, (px)
+    var circleThick = 2.5; // the thickness of the guide circle (px)
+
     // 6 AFC
     var AFC_H = 150 // height of the alternatives (px)
     var AFC_W = AFC_H * 600/412 // width of the alternatives (px)
@@ -266,10 +269,9 @@
      ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
 
      // draw guide circle
-     ctx.strokeStyle = 'black'
-     ctx.setLineDash([15, 15]);
+     ctx.strokeStyle = 'white'
      ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
-     ctx.lineWidth = 5;
+     ctx.lineWidth = circleThick;
      ctx.stroke();
 
      // draw object
@@ -311,20 +313,23 @@
      stimulus: function(c, object, scene) {
        // canvas
        var ctx = c.getContext('2d');
+
        // draw scene
        var centerx = canvasW/2 - sceneW/2;
        var centery = canvasH/2 - sceneH/2;
        ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+
        // draw object
        var centerx = canvasW/2 - objectW/2;
        var centery = canvasH/2 - objectH/2;
        ctx.drawImage(object, centerx, centery, objectW, objectH);
+
        // draw guide circle
-       ctx.strokeStyle = 'black'
-       ctx.setLineDash([15, 15]);
+       ctx.strokeStyle = 'white'
        ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
-       ctx.lineWidth = 5;
+       ctx.lineWidth = circleThick;
        ctx.stroke();
+
      },
      canvas_size: [canvasH, canvasW],
      click_area: [innerR, outerR],
@@ -337,20 +342,23 @@
    var feedback = extend(encoding_stimulus);
    feedback.trial_duration = 1000;
    feedback.stimulus = function(c){
+
      // present images on a canvas at specific locations
      var ctx = c.getContext('2d');
+
      // draw scene
      var scene = new Image();
      scene.src = jsPsych.timelineVariable('Scene');
      var centerx = canvasW/2 - sceneW/2;
      var centery = canvasH/2 - sceneH/2;
      ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+
      // draw guide circle
-     ctx.strokeStyle = 'black'
-     ctx.setLineDash([15, 15]);
+     ctx.strokeStyle = 'white'
      ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
-     ctx.lineWidth = 5;
+     ctx.lineWidth = circleThick;
      ctx.stroke();
+
      // draw object jsPsych.timelineVariable('obj_width')*.75, jsPsych.timelineVariable('obj_width')*jsPsych.timelineVariable('obj_ratio')*.75
      var object = new Image(50,50);
      object.src = jsPsych.timelineVariable('Object');
@@ -359,6 +367,7 @@
      var xPos = jsPsych.timelineVariable('xPos');
      var yPos = jsPsych.timelineVariable('yPos');
      ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
+     
    }
    feedback.data.trialType = 'feedback'
 
