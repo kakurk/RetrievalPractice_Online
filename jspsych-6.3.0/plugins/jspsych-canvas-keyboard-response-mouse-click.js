@@ -121,18 +121,26 @@ jsPsych.plugins["canvas-keyboard-response-mouse-click"] = (function () {
       let origin = {x: ctx.canvas.width/2, y: ctx.canvas.height/2}
       dist = calculate_distance(click_point, origin)
       if(trial.click_area[0] < dist && dist < trial.click_area[1]) {
+
+        // clear canvas
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         ctx.beginPath();
+
+        // draw stimulus
         trial.stimulus(c, object, scene)
-        ctx.strokeStyle = 'white';
+
+        // draw x at click location
+        ctx.strokeStyle = 'black';
         ctx.lineWidth = 5;
         ctx.setLineDash([]);
         ctx.beginPath();
-        ctx.moveTo(x-10,y-10);
-        ctx.lineTo(x+10, y+10);
-        ctx.moveTo(x+10,y-10);
-        ctx.lineTo(x-10, y+10);
+        ctx.moveTo(x-15,y-15);
+        ctx.lineTo(x+15, y+15);
+        ctx.moveTo(x+15,y-15);
+        ctx.lineTo(x-15, y+15);
         ctx.stroke();
+
+        // record the x,y location (px)
         mouseX = x;
         mouseY = y;
       }
