@@ -12,48 +12,15 @@
         <script src="jspsych-6.3.0/plugins/jspsych-preload.js"></script>
         <script src="encoding.js"></script>
         <script src="functions.js"></script>
+        <!-- <script src="instructions_data.js"></script> -->
         <script src="restudy.js"></script>
         <script src="retpractice.js"></script>
         <script src="retrieval.js"></script>
         <link href="jspsych-6.3.0/css/jspsych.css" rel="stylesheet" type="text/css">
         <style>
-            .parent {
-              position: relative;
-              width: 800px;
-              height: 549px;
-              margin-left: auto;
-              margin-right: auto;
-              background-image: url("stim/scenes/DiningRoom2.jpg");
-              background-size: 100%;
-              /* border: 5px blue solid; */
-            }
             .imageResize{
-              width: 800px;
-              height: 549px;
-            }
-            .parent_recon {
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              width: 800px;
-              height: 549px;
-              margin-left: auto;
-              margin-right: auto;
-              background-image: url("stim/scenes/DiningRoom2.jpg");
-              background-size: 100%;
-            }
-            .foreground {
-              position: absolute;
-              top: 150px;
-              left: 150px;
-              width: 150px;
-              height: 150px;
-              /* border: 5px red solid; */
-            }
-            .foreground_recon {
-              width: 150px;
-              height: 150px;
-              /* border: 5px red solid; */
+              width: 50%;
+              height: 50%;
             }
             .resp1 {
               float: left;
@@ -157,10 +124,14 @@
     scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption6))
     objects_to_preload = enc_data.map(enc_data => enc_data.Object);
 
+    var example_images = ['EncodingExample.JPG', 'RestudyExample.JPG', 'ReconstructExample.JPG', 'ReconstructExample_response.JPG', 'ReconstructExample_feedback.JPG', 'FinalTest_MC_Example.JPG', 'FinalTest_Location_Example.JPG', 'FinalTest_Location_Example_cross.JPG']
+
+    var all_images_to_preload = scenes_to_preload.concat(objects_to_preload).concat(example_images)
+
     var preload = {
      type: 'preload',
      data: { experimentComponent: 'preload'},
-     images: scenes_to_preload.concat(objects_to_preload),
+     images: all_images_to_preload,
      save_trial_parameters: {
          failed_audio: false,
          failed_video: false,
@@ -168,21 +139,24 @@
      }
     }
 
-    var stimulus_example = "<div class='parent'><img class='foreground' src='stim/objects/Volleyball_2_br.png' /></div>"
-    // var recon_example =  "<div class='parent_recon'><img class='foreground_recon' src='stim/objects/Volleyball_2_br.png' /></div>"
+    var encoding_example = '<img class = "imageResize" src="EncodingExample.JPG"></img>'
+    var restudy_example = '<img class = "imageResize"src="RestudyExample.JPG"></img>'
     var response_option_div = "<div class='resp_opt_div'><div class='resp1'>1- Likely</div><div class='resp2'>2- Unlikely</div></div>"
-    var recon_example = '<img class="imageResize" src="ReconstructionExample_nocross.png"></img>'
-    var recon_example_cross = '<img class="imageResize" src="ReconstructionExample_withcross.PNG"></img>' //
-    var gist_test_example = '<img class="imageResize" src="Retrieval_GistTestExample.png"></img>'
+    var recon_example = '<img class = "imageResize" src="ReconstructExample.JPG"></img>'
+    var recon_example_cross = '<img class = "imageResize" src="ReconstructExample_response.JPG"></img>'
+    var recon_example_feedback = '<img class = "imageResize" src="ReconstructExample_feedback.JPG"></img>'
+    var MC_test_example = '<img class = "imageResize" src="FinalTest_MC_Example.JPG"></img>'
+    var location_test_example = '<img class = "imageResize" src="FinalTest_Location_Example.JPG"></img>'
+    var location_test_example_cross = '<img class = "imageResize" src="FinalTest_Location_Example_cross.JPG"></img>'
 
     var enc_instruction = {
       type: 'instructions',
       pages: ['<div class="HeaderText"><p>Welcome to the experiment.</p><p>Click next to advance.</p></div>',
-              '<div class="HeaderText">In the following Encoding Phase of the experiment, you will be presented with an object placed on top of a background scene:</div>'+stimulus_example,
+              '<div class="HeaderText">In the following Encoding Phase of the experiment, you will be presented with an object placed on top of a background scene:</div>'+encoding_example,
               '<div class="HeaderText">'+'You will be asked on each trial to determine how likely the object is to be found in its specific position withn the scene.'+
               ' Press the <b>1 key at the top of the keyboard</b> if you think the object is <i>likely</i> to be found in its specific position within the scene. '+
               'Press the <b>2 key at the top of the keyboard</b> if you think the object is <i>unlikey</i> to be found in its specific position within the scene.'+
-              '</div>'+stimulus_example+response_option_div,
+              '</div>'+encoding_example+response_option_div,
               '<div class="HeaderText"><p>You will be presented with 40 object-image pairs.</p><p>The Encoding Phase will take approximately 8 minutes to complete.</p><p>Click next to begin.</p></div>'],
       show_clickable_nav: true
     };
@@ -206,8 +180,8 @@
      },
      canvas_size: [canvasH, canvasW],
      choices: ['1','2'],
-     trial_duration: 4000,
-     response_ends_trial: false,
+     trial_duration: null,
+     response_ends_trial: true,
      data: {trialType: 'encoding_trial'}
     };
 
@@ -223,10 +197,10 @@
       type: 'instructions',
       pages: ['<div class="HeaderText"><p>You completed the Encoding Phase.</p><p>You will now complete the Practice Phase.</p><p>Click next to advance.</p></div>',
               '<div class="HeaderText"><p>In the following Practice Phase of the experiment, you will be represented with the objects and scenes from the Encoding Phase.</p><p>You will be asked on each trial to EITHER restudy the object and scene pair OR to report the position that the object was shown on the scene.</p></div>',
-              '<div class="HeaderText">On restudy trials, you will simply be represented with the original object scene pairing. Your task it to commit the object-scene pair to memory. No response is required.</div>'+stimulus_example,
+              '<div class="HeaderText">On restudy trials, you will simply be represented with the original object scene pairing. Your task it to commit the object-scene pair to memory. No response is required.</div>'+restudy_example,
               '<div class="HeaderText">On retrieval trials, you will be presented with an object/scene pair with the object presented in the center of the screen. You are tasked with indicating the position that the object was on the scene using your mouse.</div>'+recon_example,
               '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the white circle. When a response is recorded, a black X will appear at your responded location.</div>'+recon_example_cross,
-              '<div class="HeaderText">Retrieval trials will also provide you feedback on your reponse, by briefly showing you the correct position the object took from encoding. </div>'+recon_example_cross,
+              '<div class="HeaderText">Retrieval trials will also provide you feedback on your reponse, by briefly showing you the correct position the object took from encoding. </div>'+recon_example_feedback,
               '<div class="HeaderText"><p>You will complete 3 rounds of restudy and retrieval and will be given a chance to take a break in between each round.</p>You will complete restudy and retrieval trials in blocks of 20 trials. Each block will be cued with a screen.<p></p><p>In total, the Practice Phase will take approximately 16 minutes to complete.</p><p>Click next to begin.</p></div>'],
       show_clickable_nav: true
     };
@@ -283,7 +257,7 @@
      var yPos = jsPsych.timelineVariable('yPos');
      ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
    },
-   restudy_stimulus.trial_duration = 6000
+   restudy_stimulus.trial_duration =  null
    restudy_stimulus.data.trialType = 'restudy_trial'
 
    var restudy_trials = {
@@ -334,13 +308,13 @@
      canvas_size: [canvasH, canvasW],
      click_area: [innerR, outerR],
      choices: [' '],
-     response_ends_trial: false,
-     trial_duration: 6000,
+     response_ends_trial: true,
+     trial_duration: null,
      data: {trialType: 'retrieval_trial'}
    };
 
    var feedback = extend(encoding_stimulus);
-   feedback.trial_duration = 1000;
+   feedback.trial_duration = null;
    feedback.stimulus = function(c){
 
      // present images on a canvas at specific locations
@@ -387,9 +361,10 @@
      type: 'instructions',
      pages: ['<div class="HeaderText"><p>You completed the Practice Phase.</p><p>You will now complete the Final Test Phase.</p><p>Click next to advance.</p></div>',
              '<div class="HeaderText"><p>In the following Final Test Phase of the experiment, you will be represented with the object/scene pairs from the Encoding Phase.</p><p>On each trial, you will be asked to identify which scene went with each object using a multiple choice test. Immediately afterwards, you will be asked to indicate where the object was placed on top of its scene.</p></div>',
-             '<div class="HeaderText">For the multiple choice test, you will be represented with an object from the encoding phase along with 6 scene options. Use the <b>1 through 6 keys at the top of the keyboard</b> to indicate which scene was paired with the object.</div>'+gist_test_example,
-             '<div class="HeaderText">For the location memory test, you will be presented with an object/scene pair with the object presented in the center of the screen. You are tasked with indicating the position that the object was on the scene using your mouse.</div>'+recon_example,
-             '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the white circle. When a response is recorded, a black X will appear at your responded location.</div>'+recon_example_cross,
+             '<div class="HeaderText">For the multiple choice test, you will be represented with an object from the encoding phase along with 6 scene options. Use the <b>1 through 6 keys at the top of the keyboard</b> to indicate which scene was paired with the object.</div>'+MC_test_example,
+             '<div class="HeaderText">For the location memory test, you will be presented with an object/scene pair with the object presented in the center of the screen. You are tasked with indicating the position that the object was on the scene using your mouse.</div>'+location_test_example,
+             '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the white circle. When a response is recorded, a black X will appear at your responded location.</div>'+location_test_example_cross,
+              '<div class="HeaderText">Once you indicate a position, press spacebar to lock in your answer and to advance to the next trial.</div>'+location_test_example_cross,
              '<div class="HeaderText"><p>In total, this Final Test Phase will take approximately 6 minutes to complete.</p><p>Click next when you are ready to begin.</p></div>'],
      show_clickable_nav: true
    };
