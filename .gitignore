@@ -5,3 +5,5 @@ retpractice.js
 retrieval.js
 *.png
 *.PNG
+.Rproj.user
+*.Rproj
