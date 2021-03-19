@@ -229,6 +229,17 @@
       show_clickable_nav: true
     };
 
+    // practice phase break
+    var take_a_break = {
+      type: 'instructions',
+      pages: ['<p>Take a break.</p><p>When you are ready, click "Continue".</p>'],
+      show_clickable_nav: true,
+      allow_keys: false,
+      button_label_next: 'Continue',
+      button_label_previous: '',
+      data: {trialType: 'take a break'}
+    }
+
    // Restudy
 
    var restudy_instructions = {
@@ -332,7 +343,7 @@
 
    var practice = {timeline: [practice_instructions, practice_trials]}
 
-   var restudy_practice = {timeline: [restudy, practice], repetitions: 3}
+   var restudy_practice = {timeline: [restudy, practice, take_a_break], repetitions: 3}
 
    var restudy_practice_all = {timeline: [retpractice_instructions, restudy_practice],  data: { experimentComponent: 'practice'}}
 
@@ -409,7 +420,7 @@
 
    // initialize jsPsych
     jsPsych.init({
-        timeline: [preload, retrieval_procedure], // fullscreenOn fullscreenOff encoding, retrieval, restudy_practice_all
+        timeline: [preload, restudy_practice_all], // fullscreenOn fullscreenOff encoding, retrieval, restudy_practice_all
         on_finish: function(data){
 
           // a unique data/time string
