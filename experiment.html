@@ -10,6 +10,7 @@
         <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response-mouse-click.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-instructions.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-fullscreen.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-survey-text.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-preload.js"></script>
         <script src="encoding.js"></script>
         <script src="functions.js"></script>
@@ -107,6 +108,44 @@
         cont_btn: "agree",
         force_refresh: false
       };
+
+    // demographics form
+
+    var overEighteen = true;
+
+    var demographic_form = {
+      type: 'survey-text',
+      questions: [{prompt: "What is your age? (e.g., 18)",
+                   name: 'age'},
+                  {prompt: "What is your gender?",
+                   name: 'gender'}
+                ],
+      preamble: "Demographic Questionnaire",
+      on_finish: function(){
+
+        // get data from the last trial
+        var data  = jsPsych.data.getLastTrialData();
+
+        // grab the responses property of data. The 'responses' property is a JSON
+        // text string (see jspsych documentation), so we need to parse it into
+        // an object
+        var response_object = JSON.parse(data.json())
+
+        // Question 1 Screen Out
+        var age_question = response_object[0].response.age // answer to question 1
+        age_question     = age_question.trim()   // remove leading and trailing white spaces
+        var age          = parseInt(age_question)
+
+        // If they are over the age of 18, let them continue
+        if(age < 18 || isNaN(age)){
+          overEighteen = false;
+          var end_message = 'The experiment will not continue. Must be over the age of 18 to participate.'
+            jsPsych.endExperiment(end_message)
+        }
+
+      }
+    };
+
 
     // experiment wide
     var iti = {
@@ -456,7 +495,7 @@
 
    // initialize jsPsych
     jsPsych.init({
-        timeline: [consent, preload, fullscreenOn, encoding, restudy_retrieval_all, final_test, fullscreenOff],
+        timeline: [consent, demographic_form, preload, fullscreenOn, encoding, restudy_retrieval_all, final_test, fullscreenOff], 
         on_finish: function(data){
 
           // a unique data/time string
@@ -469,16 +508,18 @@
           saveData(datestring + '_' + urlvar.subject + "_interaction_data", jsPsych.data.getInteractionData().csv());
 
           // Display the link so participants can give themselves SONA credit
-          var el = jsPsych.getDisplayElement();
-          var a = document.createElement('a');
-          var farewell_paragraph = document.createElement('p');
-          var farewell_text = document.createTextNode("Thank you for participating!");
-          farewell_paragraph.appendChild(farewell_text);
-          var linkText = document.createTextNode("Follow This Link To Get SONA Credit");
-          a.appendChild(linkText);
-          a.href = "http://capricorn.bc.edu/memolab/" //"https://bc.sona-systems.com/webstudy_credit.aspx?experiment_id=1127&credit_token=2d1623ee4a54413d826ed9a1b282539d&survey_code=" + urlvar.subject;
-          el.appendChild(farewell_paragraph);
-          el.appendChild(a);
+          if(overEighteen){
+            var el = jsPsych.getDisplayElement();
+            var a = document.createElement('a');
+            var farewell_paragraph = document.createElement('p');
+            var farewell_text = document.createTextNode("Thank you for participating!");
+            farewell_paragraph.appendChild(farewell_text);
+            var linkText = document.createTextNode("Follow This Link To Get SONA Credit");
+            a.appendChild(linkText);
+            a.href = "http://capricorn.bc.edu/memolab/" //"https://bc.sona-systems.com/webstudy_credit.aspx?experiment_id=1127&credit_token=2d1623ee4a54413d826ed9a1b282539d&survey_code=" + urlvar.subject;
+            el.appendChild(farewell_paragraph);
+            el.appendChild(a);
+          }
 
         }
     })
