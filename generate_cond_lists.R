@@ -18,8 +18,8 @@ object.Tbl <- read.csv(object.Tbl.Filename)
 ## pair an object with a scene randomly. Create a random position on the circle for object image to be
 
 ### select 40 scenes, objects
-scene.Tbl %>% sample_n(4) -> FortyScenes # 40
-object.Tbl %>% filter(width == 400) %>% sample_n(4) -> FortyObjects # 40
+scene.Tbl %>% sample_n(6) -> FortyScenes # 40
+object.Tbl %>% filter(width == 400) %>% sample_n(6) -> FortyObjects # 40
 
 ### generate x,y positions in a circle
 
@@ -53,7 +53,7 @@ Encoding %>%
 
 ## Randomly assign each trial to either restudy OR Ret Practice
 Encoding %>%
-  mutate(Condition = gl(n = 2, k = 2, labels = c('Restudy', 'RetPractice'))) %>% # k = 20
+  mutate(Condition = gl(n = 2, k = 3, labels = c('Restudy', 'RetPractice'))) %>% # k = 20
   sample_n(size = nrow(Encoding)) -> Encoding
 
 write.csv(x = Encoding, file = 'encoding.csv')
@@ -93,7 +93,7 @@ Scenes.Not.Encoding <- anti_join(scene.Tbl, FortyScenes)
 Encoding %>%
   sample_n(size = nrow(.)) -> Retrieval
 
-pick_scene_choices <- function(corScene){
+pick_scene_choices <- function(corScene, condition){
   # pick 6 scenes as choices for the 6 AFC
   
   # Pick 3 Novel Lures from Scenes not seen during encoding
@@ -102,11 +102,14 @@ pick_scene_choices <- function(corScene){
     pull(file) -> NovelLures
 
   # Pick 2 Familiar Lures from Scenes seen during encoding,
-  # making sure to exclude the correct scene
-  FortyScenes %>%
-    filter(!(file %in% corScene)) %>%
+  # making sure to exclude the correct scene.
+  # Also ensure that the familiar lures are drawn from the same
+  # condition
+  Encoding %>%
+    filter(!(Scene %in% corScene)) %>%
+    filter(Condition == condition) %>%
     sample_n(size = 2) %>%
-    pull(file) -> FamiliarLures
+    pull(Scene) -> FamiliarLures
   
   # concatenate
   ConcatenatedOptions <- c(NovelLures, FamiliarLures, corScene)
@@ -121,7 +124,7 @@ pick_scene_choices <- function(corScene){
 }
 
 Retrieval %>%
-  mutate(SceneChoices = map(Scene, pick_scene_choices)) %>%
+  mutate(SceneChoices = map2(Scene, Condition, pick_scene_choices)) %>%
   unnest(SceneChoices) -> Retrieval
 
 write.csv(x = Retrieval, file = 'retrieval.csv')

@@ -106,7 +106,8 @@
         type:'external-html',
         url: url,
         cont_btn: "agree",
-        force_refresh: false
+        force_refresh: false,
+        data: {experimentComponent: 'consentForm', trialType: 'consentForm'}
       };
 
     // demographics form
@@ -121,6 +122,7 @@
                    name: 'gender'}
                 ],
       preamble: "Demographic Questionnaire",
+      data: {experimentComponent: 'demographicsForm', trialType: 'demographicsForm'},
       on_finish: function(){
 
         // get data from the last trial
@@ -162,13 +164,13 @@
     // fullscreen on; fullescreen off
     var fullscreenOn = {
       type: 'fullscreen',
-      data: { experimentComponent: 'fullscreenUp'},
+      data: { experimentComponent: 'fullscreenUp', trialType: 'fullscreenUp'},
       fullscreen_mode: true
     }
 
     var fullscreenOff = {
       type: 'fullscreen',
-      data: { experimentComponent: 'fullscreenDown'},
+      data: { experimentComponent: 'fullscreenDown', trialType: 'fullscreenDown'},
       fullscreen_mode: false
     }
 
@@ -190,7 +192,7 @@
 
     var preload = {
      type: 'preload',
-     data: { experimentComponent: 'preload'},
+     data: { experimentComponent: 'preload', trialType: 'preload'},
      images: all_images_to_preload,
      save_trial_parameters: {
          failed_audio: false,
@@ -218,7 +220,8 @@
               'Press the <b>2 key at the top of the keyboard</b> if you think the object is <i>unlikey</i> to be found in its specific position within the scene.'+
               '</div>'+encoding_example+response_option_div,
               '<div class="HeaderText"><p>You will be presented with 40 object-image pairs.</p><p>The Encoding Phase will take approximately 8 minutes to complete.</p><p>Click next to begin.</p></div>'],
-      show_clickable_nav: true
+      show_clickable_nav: true,
+      data: {trialType: 'encodingInstructions'}
     };
 
     var encoding_stimulus = {
@@ -263,7 +266,8 @@
               '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the white circle. When a response is recorded, a black X will appear at your responded location.</div>'+recon_example_cross,
               '<div class="HeaderText">Retrieval trials will also provide you feedback on your reponse, by briefly showing you the correct position the object took from encoding. </div>'+recon_example_feedback,
               '<div class="HeaderText"><p>You will complete 3 rounds of restudy and retrieval and will be given a chance to take a break in between each round.</p>You will complete restudy and retrieval trials in blocks of 20 trials. Each block will be cued with a screen.<p></p><p>In total, the Practice Phase will take approximately 16 minutes to complete.</p><p>Click next to begin.</p></div>'],
-      show_clickable_nav: true
+      show_clickable_nav: true,
+      data: {trialType: 'practiceInstructions'}
     };
 
     // practice phase break
@@ -325,6 +329,7 @@
    var restudy_trials = {
      timeline: [iti, restudy_stimulus],
      timeline_variables: restudy_data,
+     randomize_order: true
    }
 
    var restudy = {timeline: [restudy_instructions, restudy_trials]}
@@ -406,10 +411,12 @@
 
    }
    feedback.data.trialType = 'feedback'
+   feedback.prompt = null;
 
    var retrieval_trials = {
      timeline: [iti, recontruct_trial, feedback],
-     timeline_variables: retpractice_data
+     timeline_variables: retpractice_data,
+     randomize_order: true
    }
 
    var retreival = {timeline: [retrieval_instructions, retrieval_trials]}
@@ -428,7 +435,8 @@
              '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the white circle. When a response is recorded, a black X will appear at your responded location.</div>'+location_test_example_cross,
               '<div class="HeaderText">Once you indicate a position, press spacebar to lock in your answer and to advance to the next trial.</div>'+location_test_example_cross,
              '<div class="HeaderText"><p>In total, this Final Test Phase will take approximately 6 minutes to complete.</p><p>Click next when you are ready to begin.</p></div>'],
-     show_clickable_nav: true
+     show_clickable_nav: true,
+     data: {trialType: 'finaltestInstructions'}
    };
 
    var final_gist_test = {
@@ -478,13 +486,15 @@
      prompt: null,
      choices: ['1','2','3','4','5','6'],
      response_ends_trial: true,
-     trial_duration: null
+     trial_duration: null,
+     data: {trialType: 'mc_test'}
    };
 
    var final_verbaitum_test = extend(recontruct_trial)
    final_verbaitum_test.response_ends_trial = true
    final_verbaitum_test.trial_duration = null
    final_verbaitum_test.prompt = 'Press Spacebar to lock-in your response.'
+   final_verbaitum_test.data = {trialType: 'location_test'}
 
    var final_test_procedure = {
      timeline: [iti, final_gist_test, iti, final_verbaitum_test],
@@ -495,7 +505,7 @@
 
    // initialize jsPsych
     jsPsych.init({
-        timeline: [consent, demographic_form, preload, fullscreenOn, encoding, restudy_retrieval_all, final_test, fullscreenOff], 
+        timeline: [consent, demographic_form, preload, fullscreenOn, encoding, restudy_retrieval_all, final_test, fullscreenOff],
         on_finish: function(data){
 
           // a unique data/time string
