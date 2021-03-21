@@ -18,12 +18,12 @@ object.Tbl <- read.csv(object.Tbl.Filename)
 ## pair an object with a scene randomly. Create a random position on the circle for object image to be
 
 ### select 40 scenes, objects
-scene.Tbl %>% sample_n(6) -> FortyScenes # 40
-object.Tbl %>% filter(width == 400) %>% sample_n(6) -> FortyObjects # 40
+scene.Tbl %>% sample_n(40) -> FortyScenes # 40
+object.Tbl %>% filter(width == 400) %>% sample_n(40) -> FortyObjects # 40
 
 ### generate x,y positions in a circle
 
-points <- 100
+points <- 1000
 radius <- 225
 
 drawCirclePoints <- function(points, radius, center_x = 0, center_y = 0) {
@@ -53,7 +53,7 @@ Encoding %>%
 
 ## Randomly assign each trial to either restudy OR Ret Practice
 Encoding %>%
-  mutate(Condition = gl(n = 2, k = 3, labels = c('Restudy', 'RetPractice'))) %>% # k = 20
+  mutate(Condition = gl(n = 2, k = 20, labels = c('Restudy', 'RetPractice'))) %>%
   sample_n(size = nrow(Encoding)) -> Encoding
 
 write.csv(x = Encoding, file = 'encoding.csv')
