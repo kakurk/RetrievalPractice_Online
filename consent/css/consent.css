@@ -1,0 +1,113 @@
+ /* Style Definitions */
+#consentForm p, li {
+	font-size: 12.0pt;
+	font-family: Cambria;
+  text-align: left;
+  line-height: 1em;
+}
+#consentForm {
+  width: 8.5in;
+  background-color: ghostwhite;
+  border: black;
+  border-style: double;
+  border-width: thin;
+}
+#consentList p {
+  line-height: 1.15em;
+}
+a:link, span.MsoHyperlink {
+  color: blue;
+	text-decoration: underline;
+}
+a:visited, span.MsoHyperlinkFollowed {
+  color: purple;
+	text-decoration: underline;
+}
+.MsoChpDefault {
+  font-family: Cambria;
+}
+div.WordSection1 {
+  background-color: white;
+  padding-top: 0.75in;
+  padding-bottom: 0.81in;
+  padding-left: 0.88in;
+  padding-right: 0.81in;
+}
+
+ /* List Definitions */
+ul {
+  margin-bottom: 0in;
+  margin-top: 0in
+}
+
+#introtitle p {
+  text-align: center;
+  margin: 0in;
+}
+#introtitle {
+  margin-bottom: 1em;
+}
+#researcher {
+  margin-bottom: 1em !important;
+}
+#text p{
+  font-size: 11.0pt;
+  margin-bottom: 1em;
+}
+#data_sharing p{
+  font-size: 11.0pt;
+}
+#contact ul li{
+  text-indent: 0in;
+  font-size: 11.0pt;
+}
+#contact p{
+  font-size: 11.0pt;
+}
+#contact {
+  margin-bottom: 3.6em;
+}
+#irbstatement p{
+  text-align: center;
+  font-size: 10.0pt;
+  font-family: Times
+}
+#irbstatement {
+  margin-bottom: 3.6em;
+}
+#consentlistheader p{
+  text-align: center;
+  line-height: 1.15em;
+  font-size: 11.0pt;
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+#consentlist ol li{
+  text-align: center;
+  font-size: 11.0pt;
+  list-style-type: disc;
+}
+#consentlist {
+  margin-bottom: 3.6em;
+}
+#pdf p{
+  text-align: center;
+  font-size: 10.0pt
+}
+#pdf {
+  margin-bottom: 3.6em;
+}
+
+.centered {
+  margin-left: auto;
+  margin-right: auto;
+  width: 400px;
+  list-style-position: inside;
+}
+.rightbutton {
+  margin-left: 1.15in;
+  margin-bottom: 1in
+}
+.leftbutton {
+  margin-bottom: 1in
+}
