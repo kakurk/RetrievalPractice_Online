@@ -54,11 +54,6 @@
     <body></body>
     <script>
 
-    // ask user if they are sure they want to leave early
-    $(window).on('beforeunload', function() {
-        return "Are you sure you do not want to continue with the experiment?";
-    });
-
     // grabs all variables from the url
     // url variables are specified as follows:
     // Ex: experiment.html?subject=s001
@@ -219,7 +214,7 @@
               ' Press the <b>1 key at the top of the keyboard</b> if you think the object is <i>likely</i> to be found in its specific position within the scene. '+
               'Press the <b>2 key at the top of the keyboard</b> if you think the object is <i>unlikey</i> to be found in its specific position within the scene.'+
               '</div>'+encoding_example+response_option_div,
-              '<div class="HeaderText"><p>You will be presented with 40 object-image pairs.</p><p>The Encoding Phase will take approximately 8 minutes to complete.</p><p>Click next to begin.</p></div>'],
+              '<div class="HeaderText"><p>You will be presented with 40 object-image pairs.</p><p>The Encoding Phase will take approximately 4 minutes to complete.</p><p>Click next to begin.</p></div>'],
       show_clickable_nav: true,
       data: {trialType: 'encodingInstructions'}
     };
@@ -434,7 +429,7 @@
              '<div class="HeaderText">For the location memory test, you will be presented with an object/scene pair with the object presented in the center of the screen. You are tasked with indicating the position that the object was on the scene using your mouse.</div>'+location_test_example,
              '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the white circle. When a response is recorded, a black X will appear at your responded location.</div>'+location_test_example_cross,
               '<div class="HeaderText">Once you indicate a position, press spacebar to lock in your answer and to advance to the next trial.</div>'+location_test_example_cross,
-             '<div class="HeaderText"><p>In total, this Final Test Phase will take approximately 6 minutes to complete.</p><p>Click next when you are ready to begin.</p></div>'],
+             '<div class="HeaderText"><p>In total, this Final Test Phase will take approximately 8 minutes to complete.</p><p>Click next when you are ready to begin.</p></div>'],
      show_clickable_nav: true,
      data: {trialType: 'finaltestInstructions'}
    };
