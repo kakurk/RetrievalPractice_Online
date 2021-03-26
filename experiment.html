@@ -6,6 +6,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-html-keyboard-response.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-canvas-mouseclick-response.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-external-html.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response-mouse-click.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-instructions.js"></script>
@@ -160,29 +161,29 @@
       type: 'fullscreen',
       data: { experimentComponent: 'fullscreenUp', trialType: 'fullscreenUp'},
       fullscreen_mode: true
-    }
+    };
 
     var fullscreenOff = {
       type: 'fullscreen',
       data: { experimentComponent: 'fullscreenDown', trialType: 'fullscreenDown'},
       fullscreen_mode: false
-    }
+    };
 
     // preload stimuli
     var scenes_to_preload
     var objects_to_preload
     scenes_to_preload = enc_data.map(enc_data => enc_data.Scene);
-    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption1))
-    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption2))
-    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption3))
-    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption4))
-    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption5))
-    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption6))
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption1));
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption2));
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption3));
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption4));
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption5));
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption6));
     objects_to_preload = enc_data.map(enc_data => enc_data.Object);
 
-    var example_images = ['EncodingExample.JPG', 'RestudyExample.JPG', 'ReconstructExample.JPG', 'ReconstructExample_response.JPG', 'ReconstructExample_feedback.JPG', 'FinalTest_MC_Example.JPG', 'FinalTest_Location_Example.JPG', 'FinalTest_Location_Example_cross.JPG']
+    var example_images = ['EncodingExample.JPG', 'RestudyExample.JPG', 'ReconstructExample.JPG', 'ReconstructExample_response.JPG', 'ReconstructExample_feedback.JPG', 'FinalTest_MC_Example.JPG', 'FinalTest_Location_Example.JPG', 'FinalTest_Location_Example_cross.JPG'];
 
-    var all_images_to_preload = scenes_to_preload.concat(objects_to_preload).concat(example_images)
+    var all_images_to_preload = scenes_to_preload.concat(objects_to_preload).concat(example_images);
 
     var preload = {
      type: 'preload',
@@ -193,17 +194,17 @@
          failed_video: false,
          timeout: false
      }
-    }
+   };
 
-    var encoding_example = '<img class = "imageResize" src="EncodingExample.JPG"></img>'
-    var restudy_example = '<img class = "imageResize"src="RestudyExample.JPG"></img>'
-    var response_option_div = "<div class='resp_opt_div'><div class='resp1'>1- Likely</div><div class='resp2'>2- Unlikely</div></div>"
-    var recon_example = '<img class = "imageResize" src="ReconstructExample.JPG"></img>'
-    var recon_example_cross = '<img class = "imageResize" src="ReconstructExample_response.JPG"></img>'
-    var recon_example_feedback = '<img class = "imageResize" src="ReconstructExample_feedback.JPG"></img>'
-    var MC_test_example = '<img class = "imageResize" src="FinalTest_MC_Example.JPG"></img>'
-    var location_test_example = '<img class = "imageResize" src="FinalTest_Location_Example.JPG"></img>'
-    var location_test_example_cross = '<img class = "imageResize" src="FinalTest_Location_Example_cross.JPG"></img>'
+    var encoding_example = '<img class = "imageResize" src="EncodingExample.JPG"></img>';
+    var restudy_example = '<img class = "imageResize"src="RestudyExample.JPG"></img>';
+    var response_option_div = "<div class='resp_opt_div'><div class='resp1'>1- Likely</div><div class='resp2'>2- Unlikely</div></div>";
+    var recon_example = '<img class = "imageResize" src="ReconstructExample.JPG"></img>';
+    var recon_example_cross = '<img class = "imageResize" src="ReconstructExample_response.JPG"></img>';
+    var recon_example_feedback = '<img class = "imageResize" src="ReconstructExample_feedback.JPG"></img>';
+    var MC_test_example = '<img class = "imageResize" src="FinalTest_MC_Example.JPG"></img>';
+    var location_test_example = '<img class = "imageResize" src="FinalTest_Location_Example.JPG"></img>';
+    var location_test_example_cross = '<img class = "imageResize" src="FinalTest_Location_Example_cross.JPG"></img>';
 
     var enc_instruction = {
       type: 'instructions',
@@ -253,9 +254,9 @@
     var encoding_trials = {
       timeline: [iti, encoding_stimulus],
       timeline_variables: enc_data
-    }
+    };
 
-    var encoding = {timeline: [enc_instruction, encoding_trials, iti], data: { experimentComponent: 'encoding'}}
+    var encoding = {timeline: [enc_instruction, encoding_trials, iti], data: { experimentComponent: 'encoding'}};
 
     // practice phase
     var practice_phase_instructions = {
@@ -280,10 +281,9 @@
       button_label_next: 'Continue',
       button_label_previous: '',
       data: {trialType: 'take a break'}
-    }
+    };
 
    // Restudy
-
    var restudy_instructions = {
      type: 'html-keyboard-response',
      stimulus: '<p style="font-size: 48px;">RESTUDY</p>',
@@ -294,46 +294,56 @@
          choices: false
      },
      data: {trialType: 'Restudy Cue Screen'}
-   }
+   };
 
-   var restudy_stimulus = extend(encoding_stimulus);
-   restudy_stimulus.stimulus = function(c) {
+   var restudy_stimulus = {
+     type: 'canvas-mouseclick-response',
+     images: [jsPsych.timelineVariable('Object'), jsPsych.timelineVariable('Scene')],
+     stimulus: function(c, object, scene) {
 
-     var ctx = c.getContext('2d');
+       var ctx = c.getContext('2d');
 
-     // draw scene
-     var scene = new Image();
-     scene.src = jsPsych.timelineVariable('Scene');
-     var centerx = canvasW/2 - sceneW/2;
-     var centery = canvasH/2 - sceneH/2;
-     ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+       // draw scene
+       var centerx = canvasW/2 - sceneW/2;
+       var centery = canvasH/2 - sceneH/2;
+       ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
 
-     // draw guide circle
-     ctx.strokeStyle = 'white'
-     ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
-     ctx.lineWidth = circleThick;
-     ctx.stroke();
+       // draw guide circle
+       ctx.strokeStyle = 'white'
+       ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
+       ctx.lineWidth = circleThick;
+       ctx.stroke();
 
-     // draw object
-     var object = new Image();
-     object.src = jsPsych.timelineVariable('Object');
-     var centerx = canvasW/2 - objectW/2;
-     var centery = canvasH/2 - objectH/2;
-     var xPos = jsPsych.timelineVariable('xPos');
-     var yPos = jsPsych.timelineVariable('yPos');
-     ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
-   },
-   restudy_stimulus.trial_duration =  7000
-   restudy_stimulus.data.trialType = 'restudy_trial'
-   restudy_stimulus.prompt = null
+       // draw object
+       var centerx = canvasW/2 - objectW/2;
+       var centery = canvasH/2 - objectH/2;
+       var xPos = jsPsych.timelineVariable('xPos');
+       var yPos = jsPsych.timelineVariable('yPos');
+       ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
+
+     },
+     canvas_size: [canvasH, canvasW],
+     choices: null,
+     trial_duration: 7000,
+     data: {trialType: 'restudy_trial'},
+     prompt: null,
+     response_ends_trial: false,
+     on_finish: function(data) {
+       // Add scene and object to output data
+       data.Object = jsPsych.timelineVariable('Object');
+       data.Scene = jsPsych.timelineVariable('Scene');
+       data.xPos = jsPsych.timelineVariable('xPos');
+       data.yPos = jsPsych.timelineVariable('yPos');
+     }
+   };
 
    var restudy_trials = {
      timeline: [iti, restudy_stimulus],
      timeline_variables: restudy_data,
      randomize_order: true
-   }
+   };
 
-   var restudy = {timeline: [restudy_instructions, restudy_trials]}
+   var restudy = {timeline: [restudy_instructions, restudy_trials]};
 
    // Retrieval
 
@@ -347,7 +357,7 @@
          choices: false
      },
      data: {trialType: 'Retrieval Cue Screen'}
-   }
+   };
 
    var recontruct_trial = {
      type: 'canvas-keyboard-response-mouse-click',
@@ -423,13 +433,13 @@
      timeline: [iti, recontruct_trial, feedback],
      timeline_variables: retpractice_data,
      randomize_order: true
-   }
+   };
 
-   var retreival = {timeline: [retrieval_instructions, retrieval_trials]}
+   var retreival = {timeline: [retrieval_instructions, retrieval_trials]};
 
-   var restudy_retrieval = {timeline: [restudy, retreival, take_a_break], repetitions: 3}
+   var restudy_retrieval = {timeline: [restudy, retreival, take_a_break], repetitions: 3};
 
-   var restudy_retrieval_all = {timeline: [practice_phase_instructions, restudy_retrieval],  data: { experimentComponent: 'practice'}}
+   var restudy_retrieval_all = {timeline: [practice_phase_instructions, restudy_retrieval],  data: { experimentComponent: 'practice'}};
 
    // retrieval
    var final_test_instructions = {
@@ -507,22 +517,22 @@
      }
    };
 
-   var final_verbaitum_test = extend(recontruct_trial)
-   final_verbaitum_test.response_ends_trial = true
-   final_verbaitum_test.trial_duration = null
-   final_verbaitum_test.prompt = 'Press Spacebar to lock-in your response.'
-   final_verbaitum_test.data = {trialType: 'location_test'}
+   var final_verbaitum_test = extend(recontruct_trial);
+   final_verbaitum_test.response_ends_trial = true;
+   final_verbaitum_test.trial_duration = null;
+   final_verbaitum_test.prompt = 'Press Spacebar to lock-in your response.';
+   final_verbaitum_test.data = {trialType: 'location_test'};
 
    var final_test_procedure = {
      timeline: [iti, final_gist_test, iti, final_verbaitum_test],
      timeline_variables: retrieval_data
-   }
+   };
 
-   var final_test = {timeline: [final_test_instructions, final_test_procedure], data: { experimentComponent: 'final_test'}}
+   var final_test = {timeline: [final_test_instructions, final_test_procedure], data: { experimentComponent: 'final_test'}};
 
    // initialize jsPsych
     jsPsych.init({
-        timeline: [consent, demographic_form, preload, fullscreenOn, encoding, restudy_retrieval_all, final_test, fullscreenOff],
+        timeline: [consent, demographic_form, preload, fullscreenOn, restudy_retrieval_all, fullscreenOff], //encoding, final_test
         on_finish: function(data){
 
           // a unique data/time string
