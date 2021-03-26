@@ -1,8 +1,17 @@
+
 stim
+instructions_data.js
 encoding.js
+encoding.csv
 restudy.js
+restudy.csv
 retpractice.js
+retpractice.csv
 retrieval.js
+retrieval.csv
+encoding_only.html
+practice_only.html
+retrieval_only.html
 *.png
 *.PNG
 *.JPG

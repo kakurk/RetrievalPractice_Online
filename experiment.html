@@ -143,7 +143,6 @@
       }
     };
 
-
     // experiment wide
     var iti = {
         type: 'html-keyboard-response',
@@ -241,7 +240,12 @@
      prompt: response_option_div,
      trial_duration: 4000,
      response_ends_trial: false,
-     data: {trialType: 'encoding_trial'}
+     data: {trialType: 'encoding_trial'},
+     on_finish: function(data) {
+       // Add scene and object to output data
+       data.Object = jsPsych.timelineVariable('Object');
+       data.Scene = jsPsych.timelineVariable('Scene');
+     }
     };
 
     var encoding_trials = {
@@ -372,7 +376,12 @@
      choices: [' '],
      response_ends_trial: false,
      trial_duration: 6000,
-     data: {trialType: 'retrieval_trial'}
+     data: {trialType: 'retrieval_trial'},
+     on_finish: function(data) {
+       // Add scene and object to output data
+       data.Object = jsPsych.timelineVariable('Object');
+       data.Scene = jsPsych.timelineVariable('Scene');
+     }
    };
 
    var feedback = extend(encoding_stimulus);
@@ -482,7 +491,12 @@
      choices: ['1','2','3','4','5','6'],
      response_ends_trial: true,
      trial_duration: null,
-     data: {trialType: 'mc_test'}
+     data: {trialType: 'mc_test'},
+     on_finish: function(data) {
+       // Add scene and object to output data
+       data.Object = jsPsych.timelineVariable('Object');
+       data.Scene = jsPsych.timelineVariable('Scene');
+     }
    };
 
    var final_verbaitum_test = extend(recontruct_trial)
