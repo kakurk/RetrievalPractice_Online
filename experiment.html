@@ -198,6 +198,7 @@
 
     var encoding_example = '<img class = "imageResize" src="EncodingExample.JPG"></img>';
     var restudy_example = '<img class = "imageResize"src="RestudyExample.JPG"></img>';
+    var restudy_example_clicked = '<img class = "imageResize"src="RestudyExample_clicked.JPG"></img>';
     var response_option_div = "<div class='resp_opt_div'><div class='resp1'>1- Likely</div><div class='resp2'>2- Unlikely</div></div>";
     var recon_example = '<img class = "imageResize" src="ReconstructExample.JPG"></img>';
     var recon_example_cross = '<img class = "imageResize" src="ReconstructExample_response.JPG"></img>';
@@ -263,7 +264,8 @@
       type: 'instructions',
       pages: ['<div class="HeaderText"><p>You completed the Encoding Phase.</p><p>You will now complete the Practice Phase.</p><p>Click next to advance.</p></div>',
               '<div class="HeaderText"><p>In the following Practice Phase of the experiment, you will be represented with the objects and scenes from the Encoding Phase.</p><p>You will be asked on each trial to EITHER restudy the object and scene pair OR to report the position that the object was shown on the scene.</p></div>',
-              '<div class="HeaderText">On restudy trials, you will simply be represented with the original object scene pairing. Your task it to commit the object-scene pair to memory. No response is required.</div>'+restudy_example,
+              '<div class="HeaderText">On restudy trials, you will be represented with the original object scene pairing. Your task it to simply click on the object image.</div>'+restudy_example,
+              '<div class="HeaderText">After you click on the image, a white box will appear around the object.</div>'+restudy_example_clicked,
               '<div class="HeaderText">On retrieval trials, you will be presented with an object/scene pair with the object presented in the center of the screen. You are tasked with indicating the position that the object was on the scene using your mouse.</div>'+recon_example,
               '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the white circle. When a response is recorded, a black X will appear at your responded location.</div>'+recon_example_cross,
               '<div class="HeaderText">Retrieval trials will also provide you feedback on your reponse, by briefly showing you the correct position the object took from encoding. </div>'+recon_example_feedback,
@@ -532,7 +534,7 @@
 
    // initialize jsPsych
     jsPsych.init({
-        timeline: [consent, demographic_form, preload, fullscreenOn, encoding, restudy_retrieval_all, final_test, fullscreenOff],
+        timeline: [consent, demographic_form, preload, fullscreenOn, restudy_retrieval_all, fullscreenOff],
         on_finish: function(data){
 
           // a unique data/time string
