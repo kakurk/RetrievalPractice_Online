@@ -181,7 +181,7 @@
     scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption6));
     objects_to_preload = enc_data.map(enc_data => enc_data.Object);
 
-    var example_images = ['EncodingExample.JPG', 'RestudyExample.JPG', 'ReconstructExample.JPG', 'ReconstructExample_response.JPG', 'ReconstructExample_feedback.JPG', 'FinalTest_MC_Example.JPG', 'FinalTest_Location_Example.JPG', 'FinalTest_Location_Example_cross.JPG'];
+    var example_images = ['EncodingExample.JPG', 'RestudyExample.JPG', 'RestudyExample_clicked.JPG', 'ReconstructExample.JPG', 'ReconstructExample_response.JPG', 'ReconstructExample_feedback.JPG', 'FinalTest_MC_Example.JPG', 'FinalTest_Location_Example.JPG', 'FinalTest_Location_Example_cross.JPG'];
 
     var all_images_to_preload = scenes_to_preload.concat(objects_to_preload).concat(example_images);
 
