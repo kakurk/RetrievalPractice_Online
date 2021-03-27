@@ -326,7 +326,7 @@
      choices: null,
      trial_duration: 7000,
      data: {trialType: 'restudy_trial'},
-     prompt: null,
+     prompt: 'Click on the object image.',
      response_ends_trial: false,
      on_finish: function(data) {
        // Add scene and object to output data
@@ -532,7 +532,7 @@
 
    // initialize jsPsych
     jsPsych.init({
-        timeline: [consent, demographic_form, preload, fullscreenOn, restudy_retrieval_all, fullscreenOff], //encoding, final_test
+        timeline: [consent, demographic_form, preload, fullscreenOn, encoding, restudy_retrieval_all, final_test, fullscreenOff],
         on_finish: function(data){
 
           // a unique data/time string
