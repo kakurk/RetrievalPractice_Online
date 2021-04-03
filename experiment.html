@@ -181,7 +181,7 @@
     scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption6));
     objects_to_preload = enc_data.map(enc_data => enc_data.Object);
 
-    var example_images = ['EncodingExample.JPG', 'RestudyExample_likeEncoding.JPG', 'ReconstructExample.JPG', 'ReconstructExample_response.JPG', 'ReconstructExample_feedback.JPG', 'FinalTest_MC_Example.JPG', 'FinalTest_Location_Example.JPG', 'FinalTest_Location_Example_cross.JPG'];
+    var example_images = ['EncodingExample.JPG', 'RestudyExample.JPG',  'RestudyExample_clicked.JPG', 'ReconstructExample.JPG', 'ReconstructExample_response.JPG', 'ReconstructExample_feedback.JPG', 'FinalTest_MC_Example.JPG', 'FinalTest_Location_Example.JPG', 'FinalTest_Location_Example_cross.JPG'];
 
     var all_images_to_preload = scenes_to_preload.concat(objects_to_preload).concat(example_images);
 
@@ -197,7 +197,8 @@
    };
 
     var encoding_example = '<img class = "imageResize" src="EncodingExample.JPG"></img>';
-    var restudy_example = '<img class = "imageResize"src="RestudyExample_likeEncoding.JPG"></img>';
+    var restudy_example = '<img class = "imageResize"src="RestudyExample.JPG"></img>';
+    var restudy_example_clicked = '<img class = "imageResize"src="RestudyExample_clicked.JPG"></img>';
     var response_option_div = "<div class='resp_opt_div'><div class='resp1'>1- Likely</div><div class='resp2'>2- Unlikely</div></div>";
     var recon_example = '<img class = "imageResize" src="ReconstructExample.JPG"></img>';
     var recon_example_cross = '<img class = "imageResize" src="ReconstructExample_response.JPG"></img>';
@@ -214,7 +215,7 @@
               ' Press the <b>1 key at the top of the keyboard</b> if you think the object is <i>likely</i> to be found in its specific position within the scene. '+
               'Press the <b>2 key at the top of the keyboard</b> if you think the object is <i>unlikey</i> to be found in its specific position within the scene.'+
               '</div>'+encoding_example+response_option_div,
-              '<div class="HeaderText"><p>You will be presented with 40 object-image pairs.</p><p>The Encoding Phase will take approximately 4 minutes to complete.</p><p>Click next to begin.</p></div>'],
+              '<div class="HeaderText"><p>You will be presented with 60 object-image pairs.</p><p>The Encoding Phase will take approximately 6 minutes to complete.</p><p>Click next to begin.</p></div>'],
       show_clickable_nav: true,
       data: {trialType: 'encodingInstructions'}
     };
@@ -263,12 +264,12 @@
       type: 'instructions',
       pages: ['<div class="HeaderText"><p>You completed the Encoding Phase.</p><p>You will now complete the Practice Phase.</p><p>Click next to advance.</p></div>',
               '<div class="HeaderText"><p>In the following Practice Phase of the experiment, you will be represented with the objects and scenes from the Encoding Phase.</p><p>You will be asked on each trial to EITHER restudy the object and scene pair OR to report the position that the object was shown on the scene.</p></div>',
-              '<div class="HeaderText">On restudy trials, you will be represented with the original object scene pairing. Your task is to detemine if the object is likely or unlikely to be found within the scene.</div>'+restudy_example,
-              '<div class="HeaderText">Press the <b>1 key at the top of the keyboard</b> if you think the object is <i>likely</i> to be found in its specific position within the scene. Press the <b>2 key at the top of the keyboard</b> if you think the object is <i>unlikey</i> to be found in its specific position within the scene.</div>'+restudy_example,
+              '<div class="HeaderText">On restudy trials, you will be represented with the original object scene pairing. Your task is click on the object.</div>'+restudy_example,
+              '<div class="HeaderText">Once you click on the object, a white border will appear around the object.</div>'+restudy_example_clicked,
               '<div class="HeaderText">On retrieval trials, you will be presented with an object/scene pair with the object presented in the center of the screen. You are tasked with indicating the position that the object was on the scene using your mouse.</div>'+recon_example,
               '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the white circle. When a response is recorded, a black X will appear at your responded location.</div>'+recon_example_cross,
               '<div class="HeaderText">Retrieval trials will also provide you feedback on your reponse, by briefly showing you the correct position the object took from encoding. </div>'+recon_example_feedback,
-              '<div class="HeaderText"><p>You will complete 3 rounds of restudy and retrieval and will be given a chance to take a break in between each round.</p>You will complete restudy and retrieval trials in blocks of 20 trials. Each block will be cued with a screen.<p></p><p>In total, the Practice Phase will take approximately 17 minutes to complete.</p><p>Click next to begin.</p></div>'],
+              '<div class="HeaderText"><p>You will complete 3 rounds of restudy and retrieval and will be given a chance to take a break in between each round.</p>You will complete restudy and retrieval trials in blocks of 30 trials. Each block will be cued with a screen.<p></p><p>In total, the Practice Phase will take approximately 25 minutes to complete.</p><p>Click next to begin.</p></div>'],
       show_clickable_nav: true,
       data: {trialType: 'practiceInstructions'}
     };
@@ -297,76 +298,76 @@
      data: {trialType: 'Restudy Cue Screen'}
    };
 
-   // var restudy_stimulus = {
-   //   type: 'canvas-mouseclick-response',
-   //   images: [jsPsych.timelineVariable('Object'), jsPsych.timelineVariable('Scene')],
-   //   stimulus: function(c, object, scene) {
-   //
-   //     var ctx = c.getContext('2d');
-   //
-   //     // draw scene
-   //     var centerx = canvasW/2 - sceneW/2;
-   //     var centery = canvasH/2 - sceneH/2;
-   //     ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
-   //
-   //     // draw guide circle
-   //     ctx.strokeStyle = 'white'
-   //     ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
-   //     ctx.lineWidth = circleThick;
-   //     ctx.stroke();
-   //
-   //     // draw object
-   //     var centerx = canvasW/2 - objectW/2;
-   //     var centery = canvasH/2 - objectH/2;
-   //     var xPos = jsPsych.timelineVariable('xPos');
-   //     var yPos = jsPsych.timelineVariable('yPos');
-   //     ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
-   //
-   //   },
-   //   canvas_size: [canvasH, canvasW],
-   //   choices: null,
-   //   trial_duration: 7000,
-   //   data: {trialType: 'restudy_trial'},
-   //   prompt: 'Click on the object image.',
-   //   response_ends_trial: false,
-   //   on_finish: function(data) {
-   //     // Add scene and object to output data
-   //     data.Object = jsPsych.timelineVariable('Object');
-   //     data.Scene = jsPsych.timelineVariable('Scene');
-   //     data.xPos = jsPsych.timelineVariable('xPos');
-   //     data.yPos = jsPsych.timelineVariable('yPos');
-   //   }
-   // };
+   var restudy_stimulus = {
+     type: 'canvas-mouseclick-response',
+     images: [jsPsych.timelineVariable('Object'), jsPsych.timelineVariable('Scene')],
+     stimulus: function(c, object, scene) {
 
-  var restudy_stimulus = extend(encoding_stimulus)
-  restudy_stimulus.stimulus = function(c) {
-         var ctx = c.getContext('2d');
+       var ctx = c.getContext('2d');
 
-         // draw scene
-         var scene = new Image();
-         scene.src = jsPsych.timelineVariable('Scene');
-         var centerx = canvasW/2 - sceneW/2;
-         var centery = canvasH/2 - sceneH/2;
-         ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+       // draw scene
+       var centerx = canvasW/2 - sceneW/2;
+       var centery = canvasH/2 - sceneH/2;
+       ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
 
-         // draw guide circle
-         ctx.strokeStyle = 'white'
-         ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
-         ctx.lineWidth = circleThick;
-         ctx.stroke();
+       // draw guide circle
+       ctx.strokeStyle = 'white'
+       ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
+       ctx.lineWidth = circleThick;
+       ctx.stroke();
 
-         // draw object
-         var object = new Image();
-         object.src = jsPsych.timelineVariable('Object');
-         var centerx = canvasW/2 - objectW/2;
-         var centery = canvasH/2 - objectH/2;
-         var xPos = jsPsych.timelineVariable('xPos');
-         var yPos = jsPsych.timelineVariable('yPos');
-         ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
+       // draw object
+       var centerx = canvasW/2 - objectW/2;
+       var centery = canvasH/2 - objectH/2;
+       var xPos = jsPsych.timelineVariable('xPos');
+       var yPos = jsPsych.timelineVariable('yPos');
+       ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
 
-       },
-  restudy_stimulus.trial_duration = 7000;
-  restudy_stimulus.data = {trialType: 'restudy_trial'};
+     },
+     canvas_size: [canvasH, canvasW],
+     choices: null,
+     trial_duration: 7000,
+     data: {trialType: 'restudy_trial'},
+     prompt: 'Click on the object image.',
+     response_ends_trial: false,
+     on_finish: function(data) {
+       // Add scene and object to output data
+       data.Object = jsPsych.timelineVariable('Object');
+       data.Scene = jsPsych.timelineVariable('Scene');
+       data.xPos = jsPsych.timelineVariable('xPos');
+       data.yPos = jsPsych.timelineVariable('yPos');
+     }
+   };
+
+  // var restudy_stimulus = extend(encoding_stimulus)
+  // restudy_stimulus.stimulus = function(c) {
+  //        var ctx = c.getContext('2d');
+  //
+  //        // draw scene
+  //        var scene = new Image();
+  //        scene.src = jsPsych.timelineVariable('Scene');
+  //        var centerx = canvasW/2 - sceneW/2;
+  //        var centery = canvasH/2 - sceneH/2;
+  //        ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+  //
+  //        // draw guide circle
+  //        ctx.strokeStyle = 'white'
+  //        ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
+  //        ctx.lineWidth = circleThick;
+  //        ctx.stroke();
+  //
+  //        // draw object
+  //        var object = new Image();
+  //        object.src = jsPsych.timelineVariable('Object');
+  //        var centerx = canvasW/2 - objectW/2;
+  //        var centery = canvasH/2 - objectH/2;
+  //        var xPos = jsPsych.timelineVariable('xPos');
+  //        var yPos = jsPsych.timelineVariable('yPos');
+  //        ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
+  //
+  //      },
+  // restudy_stimulus.trial_duration = 7000;
+  // restudy_stimulus.data = {trialType: 'restudy_trial'};
 
    var restudy_trials = {
      timeline: [iti, restudy_stimulus],
@@ -486,7 +487,7 @@
              '<div class="HeaderText">For the location memory test, you will be presented with an object/scene pair with the object presented in the center of the screen. You are tasked with indicating the position that the object was on the scene using your mouse.</div>'+location_test_example,
              '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the white circle. When a response is recorded, a black X will appear at your responded location.</div>'+location_test_example_cross,
               '<div class="HeaderText">Once you indicate a position, press spacebar to lock in your answer and to advance to the next trial.</div>'+location_test_example_cross,
-             '<div class="HeaderText"><p>In total, this Final Test Phase will take approximately 5 minutes to complete.</p><p>Click next when you are ready to begin.</p></div>'],
+             '<div class="HeaderText"><p>In total, this Final Test Phase will take approximately 7.5 minutes to complete.</p><p>Click next when you are ready to begin.</p></div>'],
      show_clickable_nav: true,
      data: {trialType: 'finaltestInstructions'}
    };

@@ -111,6 +111,8 @@ jsPsych.plugins["canvas-mouseclick-response"] = (function () {
     var centery = canvasH/2 - objectH/2;
     var xPos = jsPsych.timelineVariable('xPos');
     var yPos = jsPsych.timelineVariable('yPos');
+    var mouseX = null;
+    var mouseY = null;
     ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
 
     c.addEventListener('click', e => {
@@ -177,7 +179,9 @@ jsPsych.plugins["canvas-mouseclick-response"] = (function () {
       // gather the data to store for the trial
       var trial_data = {
         rt: response.rt,
-        response: response.key
+        response: response.key,
+        clickx: mouseX,
+        clicky: mouseY
       };
 
       // clear the display
