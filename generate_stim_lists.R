@@ -44,7 +44,7 @@ scene.Tbl %>%
   filter(pairNum == 1) -> scene.Tbl
 
 # a vector of indices of scenes that I determined to be too "busy"
-busyVector = c(20,35,38,45,64,69,78,81,86)
+busyVector = c(13,20,35,38,45,64,69,78,81,86)
 scene.Tbl$busy = 'not_busy'
 scene.Tbl$busy[busyVector] = 'busy'
 
