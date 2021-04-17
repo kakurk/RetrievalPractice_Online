@@ -13,12 +13,12 @@
         <script src="jspsych-6.3.0/plugins/jspsych-fullscreen.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-survey-text.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-preload.js"></script>
-        <script src="scripts/encoding.js"></script>
+        <script src="scripts/experiment1/encoding.js"></script>
         <script src="functions.js"></script>
         <!-- <script src="scripts/experiment1/instructions_data.js"></script> -->
-        <script src="scripts/restudy.js"></script>
-        <script src="scripts/retpractice.js"></script>
-        <script src="scripts/retrieval.js"></script>
+        <script src="scripts/experiment1/restudy.js"></script>
+        <script src="scripts/experiment1/retpractice.js"></script>
+        <script src="scripts/experiment1/retrieval.js"></script>
         <link href="jspsych-6.3.0/css/jspsych.css" rel="stylesheet" type="text/css">
         <link href="consent/css/consent.css" rel="stylesheet" type="text/css">
         <style>
@@ -601,7 +601,7 @@
 
    // initialize jsPsych
     jsPsych.init({
-        timeline: [consent, demographic_form, preload, fullscreenOn, encoding, restudy_retrieval_all, final_test, fullscreenOff],
+        timeline: [demographic_form, preload, fullscreenOn, encoding, restudy_retrieval_all, final_test, fullscreenOff], //consent
         on_finish: function(data){
 
           // a unique data/time string
