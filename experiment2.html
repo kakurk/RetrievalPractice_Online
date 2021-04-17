@@ -13,12 +13,12 @@
         <script src="jspsych-6.3.0/plugins/jspsych-fullscreen.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-survey-text.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-preload.js"></script>
-        <script src="scripts/encoding.js"></script>
+        <!-- <script src="scripts/experiment1/encoding.js"></script> -->
         <script src="functions.js"></script>
-        <!-- <script src="scripts/experiment1/instructions_data.js"></script> -->
-        <script src="scripts/restudy.js"></script>
-        <script src="scripts/retpractice.js"></script>
-        <script src="scripts/retrieval.js"></script>
+        <script src="scripts/experiment1/instructions_data.js"></script>
+        <!-- <script src="scripts/experiment1/restudy.js"></script> -->
+        <!-- <script src="scripts/experiment1/retpractice.js"></script> -->
+        <!-- <script src="scripts/experiment1/retrieval.js"></script> -->
         <link href="jspsych-6.3.0/css/jspsych.css" rel="stylesheet" type="text/css">
         <link href="consent/css/consent.css" rel="stylesheet" type="text/css">
         <style>
@@ -80,7 +80,7 @@
     // 6 AFC
     var AFC_H = 150 // height of the alternatives (px)
     var AFC_W = AFC_H * 600/412 // width of the alternatives (px)
-    var firstRow = 225 // position of the first row (px)
+    var firstRow = 250 // position of the first row (px)
     var secondRow = 425 // position of the second row (px)
     var firstColumn = 250 // position of the first column (px)
     var secondColumn = canvasW/2 - AFC_W/2 // position of the second column (px)
@@ -183,7 +183,7 @@
 
     var example_images = ['EncodingExample.JPG', 'RestudyExample.JPG',  'RestudyExample_clicked.JPG', 'ReconstructExample.JPG', 'ReconstructExample_response.JPG', 'ReconstructExample_feedback.JPG', 'FinalTest_MC_Example.JPG', 'FinalTest_Location_Example.JPG', 'FinalTest_Location_Example_cross.JPG'];
 
-    example_images = example_images.map(x => 'images/' + x)
+    example_images = example_images.map(x => 'images/' + x);
 
     var all_images_to_preload = scenes_to_preload.concat(objects_to_preload).concat(example_images);
 
@@ -222,21 +222,29 @@
       data: {trialType: 'encodingInstructions'}
     };
 
+    // global variables for encoding
+    var object = new Image();
+    var object_souce;
+    var scene = new Image();
+    var scene_source;
+    var xPos;
+    var yPos;
+
     var encoding_stimulus = {
      type: 'canvas-keyboard-response',
-     stimulus: function(c) {
-       var ctx = c.getContext('2d');
-       var object = new Image();
-       var scene = new Image();
+     on_start: function(){
        object.src = jsPsych.timelineVariable('Object');
        scene.src = jsPsych.timelineVariable('Scene');
+       xPos = jsPsych.timelineVariable('xPos');
+       yPos = jsPsych.timelineVariable('yPos');
+     },
+     stimulus: function(c){
+       var ctx = c.getContext('2d');
        var centerx = canvasW/2 - sceneW/2;
        var centery = canvasH/2 - sceneH/2;
        ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
        var centerx = canvasW/2 - objectW/2;
        var centery = canvasH/2 - objectH/2;
-       var xPos = jsPsych.timelineVariable('xPos');
-       var yPos = jsPsych.timelineVariable('yPos');
        ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
      },
      canvas_size: [canvasH, canvasW],
@@ -300,131 +308,229 @@
      data: {trialType: 'Restudy Cue Screen'}
    };
 
-   var object = new Image();
-   var object_source;
-   var scene = new Image();
-   var scene_source;
-   var xPos;
-   var yPos;
+   // initalizing global variables to be used in the canvas-mouseclick-response plugins
+   // Image constructors and accompanying sources
+   var AFC1 = new Image();
+   var AFC1_source;
+   var AFC2 = new Image();
+   var AFC2_source;
+   var AFC3 = new Image();
+   var AFC3_source;
+   var AFC4 = new Image();
+   var AFC4_source;
+   var AFC5 = new Image();
+   var AFC5_source;
+   var AFC6 = new Image();
+   var AFC6_source;
 
    var restudy_stimulus = {
      type: 'canvas-mouseclick-response',
      on_start: function(){
+       // at the beginning of every trial, set the value of the global variables
+       // based on the timeline variables, which change from trial to trial
+
+       // probe (i.e., the object)
        object_source = jsPsych.timelineVariable('Object');
        object.src = object_source;
+
+       // scene
        scene_source = jsPsych.timelineVariable('Scene');
        scene.src = scene_source;
+
+       // Alternative Forced Choice option 1 (top left)
+       AFC1_source = jsPsych.timelineVariable('RespOption1');
+       AFC1.src = AFC1_source
+
+       // Alternative Forced Choice option 2 (top middle)
+       AFC2_source = jsPsych.timelineVariable('RespOption2');
+       AFC2.src = AFC2_source
+
+       AFC3_source = jsPsych.timelineVariable('RespOption3');
+       AFC3.src = AFC3_source
+
+       AFC4_source = jsPsych.timelineVariable('RespOption4');
+       AFC4.src = AFC4_source
+
+       AFC5_source = jsPsych.timelineVariable('RespOption5');
+       AFC5.src = AFC5_source
+
+       AFC6_source = jsPsych.timelineVariable('RespOption6');
+       AFC6.src = AFC6_source
+
        xPos = jsPsych.timelineVariable('xPos');
        yPos = jsPsych.timelineVariable('yPos');
+
      },
      stimulus: function(c) {
+       // draw the initial stimulus array for each trial
+       // c is the canvas object that you will "draw" on
 
+       // create a border around the canvas area
+       //c.style.border = "5px solid #A9A9A9";
+
+       // set font size
        var ctx = c.getContext('2d');
+       ctx.font = '20px Arial';
 
-       // draw scene
-       var centerx = ctx.canvas.width/2 - sceneW/2;
-       var centery = ctx.canvas.height/2 - sceneH/2;
-       ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+       // scene
+       var centerx = ctx.canvas.width/2 - sceneW/8;
+       var centery = ctx.canvas.height/2 - sceneH/8;
+       ctx.drawImage(scene, centerx, centery - 200, sceneW/4, sceneH/4);
 
-       // draw guide circle
-       ctx.strokeStyle = 'white'
-       ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
-       ctx.lineWidth = circleThick;
-       ctx.stroke();
+       // width
+       var centerx = ctx.canvas.width/2 - objectW/8;
+       var centery = ctx.canvas.height/2 - objectH/8;
+       ctx.drawImage(object, centerx + xPos/4, centery + yPos/4 - 200, objectW/4, objectH/4);
 
-       // draw object
-       var centerx = ctx.canvas.width/2 - objectW/2;
-       var centery = ctx.canvas.height/2 - objectH/2;
-       ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
+       // AFC options 1-6
+       ctx.drawImage(AFC1, firstColumn, firstRow, AFC_W, AFC_H);
+       // ctx.fillText('1', firstColumn+(AFC_W/2), firstRow+100+AFC_H+25)
+
+       ctx.drawImage(AFC2, secondColumn, firstRow, AFC_W, AFC_H);
+       // ctx.fillText('2', secondColumn+(AFC_W/2), firstRow+100+AFC_H+25)
+
+       ctx.drawImage(AFC3, thirdColumn, firstRow, AFC_W, AFC_H);
+       // ctx.fillText('3', thirdColumn+(AFC_W/2), firstRow+100+AFC_H+25)
+
+       ctx.drawImage(AFC4, firstColumn, secondRow, AFC_W, AFC_H);
+       // ctx.fillText('4', firstColumn+(AFC_W/2), secondRow+100+AFC_H+25)
+
+       ctx.drawImage(AFC5, secondColumn, secondRow, AFC_W, AFC_H);
+       // ctx.fillText('5', secondColumn+(AFC_W/2), secondRow+100+AFC_H+25)
+
+       ctx.drawImage(AFC6, thirdColumn, secondRow, AFC_W, AFC_H);
+       // ctx.fillText('6', thirdColumn+(AFC_W/2), secondRow+100+AFC_H+25)
 
      },
      on_click: function(c) {
 
-       var ctx = c.getContext('2d');
+        // canvas object
+        var ctx = c.getContext('2d');
 
-       // clear canvas
-       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-       ctx.beginPath();
+         // clear canvas
+         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+         ctx.beginPath();
 
-       // draw scene
-       var centerx = ctx.canvas.width/2 - sceneW/2;
-       var centery = ctx.canvas.height/2 - sceneH/2;
-       ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+         // present images on a canvas at specific locations
+         var ctx = c.getContext('2d');
 
-       // draw guide circle
-       ctx.strokeStyle = 'white'
-       ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
-       ctx.lineWidth = circleThick;
-       ctx.stroke();
+         ctx.lineWidth = 5;
+         ctx.strokeStyle = 'black';
+         ctx.font = '20px Arial';
 
-       // draw object
-       var centerx = ctx.canvas.width/2 - objectW/2;
-       var centery = ctx.canvas.height/2 - objectH/2;
-       ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
+         // scene
+         var centerx = ctx.canvas.width/2 - sceneW/8;
+         var centery = ctx.canvas.height/2 - sceneH/8;
+         ctx.drawImage(scene, centerx, centery - 200, sceneW/4, sceneH/4);
 
-       // draw border
-       ctx.strokeRect(centerx+xPos, centery+yPos, objectW, objectH);
+         // width
+         var centerx = ctx.canvas.width/2 - objectW/8;
+         var centery = ctx.canvas.height/2 - objectH/8;
+         ctx.drawImage(object, centerx + xPos/4, centery + yPos/4 - 200, objectW/4, objectH/4);
+
+         // Alternative Forced Choice
+         ctx.drawImage(AFC1, firstColumn, firstRow, AFC_W, AFC_H);
+         // ctx.fillText('1', firstColumn+(AFC_W/2), firstRow+AFC_H+25)
+
+         ctx.drawImage(AFC2, secondColumn, firstRow, AFC_W, AFC_H);
+         // ctx.fillText('2', secondColumn+(AFC_W/2), firstRow+AFC_H+25)
+
+         ctx.drawImage(AFC3, thirdColumn, firstRow, AFC_W, AFC_H);
+         // ctx.fillText('3', thirdColumn+(AFC_W/2), firstRow+AFC_H+25)
+
+         ctx.drawImage(AFC4, firstColumn, secondRow, AFC_W, AFC_H);
+         // ctx.fillText('4', firstColumn+(AFC_W/2), secondRow+AFC_H+25)
+
+         ctx.drawImage(AFC5, secondColumn, secondRow, AFC_W, AFC_H);
+         // ctx.fillText('5', secondColumn+(AFC_W/2), secondRow+AFC_H+25)
+
+         ctx.drawImage(AFC6, thirdColumn, secondRow, AFC_W, AFC_H);
+         // ctx.fillText('6', thirdColumn+(AFC_W/2), secondRow+AFC_H+25);
+
+         // draw a box around the image
+         if(scene_source === AFC1_source){
+           ctx.strokeRect(firstColumn, firstRow, AFC_W, AFC_H);
+         } else if(scene_source === AFC2_source){
+           ctx.strokeRect(secondColumn, firstRow, AFC_W, AFC_H);
+         } else if(scene_source === AFC3_source){
+           ctx.strokeRect(thirdColumn, firstRow, AFC_W, AFC_H);
+         } else if(scene_source === AFC4_source){
+           ctx.strokeRect(firstColumn, secondRow, AFC_W, AFC_H);
+         } else if(scene_source === AFC5_source){
+           ctx.strokeRect(secondColumn, secondRow, AFC_W, AFC_H);
+         } else if(scene_source === AFC6_source){
+           ctx.strokeRect(thirdColumn, secondRow, AFC_W, AFC_H);
+         }
 
      },
      click_correct: function(x,y){
+       // function that takes the x y click coordinate and returns a boolean
+       // determining whether or not the click was correct or incorrect
 
-       let cx = canvasW/2;
-       let cy = canvasH/2;
+       // initalize local variables
+       let left = 0 ;
+       let right = 0;
+       let bottom = 0;
+       let top = 0;
 
-       let imageCenter_x = cx + xPos;
-       let imageCenter_y = cy + yPos;
+       // figure out which alternative forced choice option is correct
+       if(scene_source === AFC1_source){
+         left = firstColumn;
+         right = firstColumn + AFC_W;
+         bottom = firstRow + AFC_H;
+         top = firstRow;
+       } else if(scene_source === AFC2_source){
+         left = secondColumn;
+         right = secondColumn + AFC_W;
+         bottom = firstRow + AFC_H;
+         top = firstRow;
+       } else if(scene_source === AFC3_source){
+         left = thirdColumn;
+         right = thirdColumn + AFC_W;
+         bottom = firstRow + AFC_H;
+         top = firstRow;
+       } else if(scene_source === AFC4_source){
+         left = firstColumn;
+         right = firstColumn + AFC_W;
+         bottom = secondRow + AFC_H;
+         top = secondRow;
+       } else if(scene_source === AFC5_source){
+         left = secondColumn;
+         right = secondColumn + AFC_W;
+         bottom = secondRow + AFC_H;
+         top = secondRow;
+       } else if(scene_source === AFC6_source){
+         left = thirdColumn;
+         right = thirdColumn + AFC_W;
+         bottom = secondRow + AFC_H;
+         top = secondRow;
+       }
 
-       return(x > imageCenter_x - objectH/2 && x < imageCenter_x + objectW/2 && y > imageCenter_y - objectH/2 && y < imageCenter_y + objectH/2)
+       return(x > left && x < right && y < bottom && y > top)
 
      },
      canvas_size: [canvasH, canvasW],
+     prompt: null,
      choices: null,
+     response_ends_trial: false,
      trial_duration: 7000,
      data: {trialType: 'restudy_trial'},
-     prompt: 'Click on the object image.',
-     response_ends_trial: false,
      on_finish: function(data) {
        // Add scene and object to output data
        data.Object = jsPsych.timelineVariable('Object');
        data.Scene = jsPsych.timelineVariable('Scene');
-       data.xPos = jsPsych.timelineVariable('xPos');
-       data.yPos = jsPsych.timelineVariable('yPos');
+       data.RespOption1 = jsPsych.timelineVariable('RespOption1');
+       data.RespOption2 = jsPsych.timelineVariable('RespOption2');
+       data.RespOption3 = jsPsych.timelineVariable('RespOption3');
+       data.RespOption4 = jsPsych.timelineVariable('RespOption4');
+       data.RespOption5 = jsPsych.timelineVariable('RespOption5');
+       data.RespOption6 = jsPsych.timelineVariable('RespOption6');
      }
    };
 
-  // var restudy_stimulus = extend(encoding_stimulus)
-  // restudy_stimulus.stimulus = function(c) {
-  //        var ctx = c.getContext('2d');
-  //
-  //        // draw scene
-  //        var scene = new Image();
-  //        scene.src = jsPsych.timelineVariable('Scene');
-  //        var centerx = canvasW/2 - sceneW/2;
-  //        var centery = canvasH/2 - sceneH/2;
-  //        ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
-  //
-  //        // draw guide circle
-  //        ctx.strokeStyle = 'white'
-  //        ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
-  //        ctx.lineWidth = circleThick;
-  //        ctx.stroke();
-  //
-  //        // draw object
-  //        var object = new Image();
-  //        object.src = jsPsych.timelineVariable('Object');
-  //        var centerx = canvasW/2 - objectW/2;
-  //        var centery = canvasH/2 - objectH/2;
-  //        var xPos = jsPsych.timelineVariable('xPos');
-  //        var yPos = jsPsych.timelineVariable('yPos');
-  //        ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
-  //
-  //      },
-  // restudy_stimulus.trial_duration = 7000;
-  // restudy_stimulus.data = {trialType: 'restudy_trial'};
-
    var restudy_trials = {
      timeline: [iti, restudy_stimulus],
-     timeline_variables: restudy_data,
+     timeline_variables: retrieval_data,
      randomize_order: true
    };
 
@@ -444,81 +550,240 @@
      data: {trialType: 'Retrieval Cue Screen'}
    };
 
+   var clickSelection
+
    var recontruct_trial = {
-     type: 'canvas-keyboard-response-mouse-click',
-     images: [jsPsych.timelineVariable('Object'), jsPsych.timelineVariable('Scene')],
-     stimulus: function(c, object, scene) {
-       // canvas
+     type: 'canvas-mouseclick-response',
+     on_start: function(){
+       // at the beginning of every trial, set the value of the global variables
+       // based on the timeline variables, which change from trial to trial
+
+       // probe (i.e., the object)
+       object_source = jsPsych.timelineVariable('Object');
+       object.src = object_source;
+
+       // scene
+       scene_source = jsPsych.timelineVariable('Scene');
+       scene.src = scene_source;
+
+       // Alternative Forced Choice option 1 (top left)
+       AFC1_source = jsPsych.timelineVariable('RespOption1');
+       AFC1.src = AFC1_source
+
+       // Alternative Forced Choice option 2 (top middle)
+       AFC2_source = jsPsych.timelineVariable('RespOption2');
+       AFC2.src = AFC2_source
+
+       AFC3_source = jsPsych.timelineVariable('RespOption3');
+       AFC3.src = AFC3_source
+
+       AFC4_source = jsPsych.timelineVariable('RespOption4');
+       AFC4.src = AFC4_source
+
+       AFC5_source = jsPsych.timelineVariable('RespOption5');
+       AFC5.src = AFC5_source
+
+       AFC6_source = jsPsych.timelineVariable('RespOption6');
+       AFC6.src = AFC6_source
+
+       xPos = jsPsych.timelineVariable('xPos');
+       yPos = jsPsych.timelineVariable('yPos');
+
+     },
+     stimulus: function(c) {
+       // draw the initial stimulus array for each trial
+       // c is the canvas object that you will "draw" on
+
+       // create a border around the canvas area
+       // c.style.border = "5px solid #A9A9A9";
+
+       // set font size
        var ctx = c.getContext('2d');
+       ctx.font = '20px Arial';
+       ctx.lineWidth = 5;
 
-       // draw scene
-       var centerx = canvasW/2 - sceneW/2;
-       var centery = canvasH/2 - sceneH/2;
-       ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+       // scene
+       var centerx = ctx.canvas.width/2 - sceneW/8;
+       var centery = ctx.canvas.height/2 - sceneH/8;
+       ctx.strokeRect(centerx, centery - 200, sceneW/4, sceneH/4);
 
-       // draw object
-       var centerx = canvasW/2 - objectW/2;
-       var centery = canvasH/2 - objectH/2;
-       ctx.drawImage(object, centerx, centery, objectW, objectH);
+       // width
+       var centerx = ctx.canvas.width/2 - objectW/8;
+       var centery = ctx.canvas.height/2 - objectH/8;
+       ctx.drawImage(object, centerx + xPos/4, centery + yPos/4 - 200, objectW/4, objectH/4);
 
-       // draw guide circle
-       ctx.strokeStyle = 'white'
-       ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
-       ctx.lineWidth = circleThick;
-       ctx.stroke();
+       // AFC options 1-6
+       ctx.drawImage(AFC1, firstColumn, firstRow, AFC_W, AFC_H);
+       // ctx.fillText('1', firstColumn+(AFC_W/2), firstRow+100+AFC_H+25)
+
+       ctx.drawImage(AFC2, secondColumn, firstRow, AFC_W, AFC_H);
+       // ctx.fillText('2', secondColumn+(AFC_W/2), firstRow+100+AFC_H+25)
+
+       ctx.drawImage(AFC3, thirdColumn, firstRow, AFC_W, AFC_H);
+       // ctx.fillText('3', thirdColumn+(AFC_W/2), firstRow+100+AFC_H+25)
+
+       ctx.drawImage(AFC4, firstColumn, secondRow, AFC_W, AFC_H);
+       // ctx.fillText('4', firstColumn+(AFC_W/2), secondRow+100+AFC_H+25)
+
+       ctx.drawImage(AFC5, secondColumn, secondRow, AFC_W, AFC_H);
+       // ctx.fillText('5', secondColumn+(AFC_W/2), secondRow+100+AFC_H+25)
+
+       ctx.drawImage(AFC6, thirdColumn, secondRow, AFC_W, AFC_H);
+       // ctx.fillText('6', thirdColumn+(AFC_W/2), secondRow+100+AFC_H+25)
+
+     },
+     on_click: function(c) {
+
+          // canvas object
+          var ctx = c.getContext('2d');
+
+         // clear canvas
+         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+         ctx.beginPath();
+
+         // present images on a canvas at specific locations
+         var ctx = c.getContext('2d');
+
+         ctx.lineWidth = 5;
+         ctx.strokeStyle = 'black';
+         ctx.font = '20px Arial';
+
+         // scene
+         var centerx = ctx.canvas.width/2 - sceneW/8;
+         var centery = ctx.canvas.height/2 - sceneH/8;
+         ctx.strokeRect(centerx, centery - 200, sceneW/4, sceneH/4);
+
+         // width
+         var centerx = ctx.canvas.width/2 - objectW/8;
+         var centery = ctx.canvas.height/2 - objectH/8;
+         ctx.drawImage(object, centerx + xPos/4, centery + yPos/4 - 200, objectW/4, objectH/4);
+
+         // Alternative Forced Choice
+         ctx.drawImage(AFC1, firstColumn, firstRow, AFC_W, AFC_H);
+         // ctx.fillText('1', firstColumn+(AFC_W/2), firstRow+AFC_H+25)
+
+         ctx.drawImage(AFC2, secondColumn, firstRow, AFC_W, AFC_H);
+         // ctx.fillText('2', secondColumn+(AFC_W/2), firstRow+AFC_H+25)
+
+         ctx.drawImage(AFC3, thirdColumn, firstRow, AFC_W, AFC_H);
+         // ctx.fillText('3', thirdColumn+(AFC_W/2), firstRow+AFC_H+25)
+
+         ctx.drawImage(AFC4, firstColumn, secondRow, AFC_W, AFC_H);
+         // ctx.fillText('4', firstColumn+(AFC_W/2), secondRow+AFC_H+25)
+
+         ctx.drawImage(AFC5, secondColumn, secondRow, AFC_W, AFC_H);
+         // ctx.fillText('5', secondColumn+(AFC_W/2), secondRow+AFC_H+25)
+
+         ctx.drawImage(AFC6, thirdColumn, secondRow, AFC_W, AFC_H);
+         // ctx.fillText('6', thirdColumn+(AFC_W/2), secondRow+AFC_H+25);
+
+         // draw a box around the image
+         if(clickSelection === 1){
+           ctx.strokeRect(firstColumn, firstRow, AFC_W, AFC_H);
+         } else if(clickSelection === 2){
+           ctx.strokeRect(secondColumn, firstRow, AFC_W, AFC_H);
+         } else if(clickSelection === 3){
+           ctx.strokeRect(thirdColumn, firstRow, AFC_W, AFC_H);
+         } else if(clickSelection === 4){
+           ctx.strokeRect(firstColumn, secondRow, AFC_W, AFC_H);
+         } else if(clickSelection === 5){
+           ctx.strokeRect(secondColumn, secondRow, AFC_W, AFC_H);
+         } else if(clickSelection === 6){
+           ctx.strokeRect(thirdColumn, secondRow, AFC_W, AFC_H);
+         }
+
+     },
+     click_correct: function(x,y){
+       // function that takes the x y click coordinate and returns a boolean
+       // determining whether or not the click was correct or incorrect
+
+       // initalize local variables
+       let left = 0 ;
+       let right = 0;
+       let bottom = 0;
+       let top = 0;
+       let clicked = false;
+
+       // figure out which alternative forced choice option is correct
+       left = firstColumn;
+       right = firstColumn + AFC_W;
+       bottom = firstRow + AFC_H;
+       top = firstRow;
+       if(x > left && x < right && y < bottom && y > top){
+         clickSelection = 1;
+         clicked = true;
+       }
+       left = secondColumn;
+       right = secondColumn + AFC_W;
+       bottom = firstRow + AFC_H;
+       top = firstRow;
+       if(x > left && x < right && y < bottom && y > top){
+         clickSelection = 2;
+         clicked = true;
+       }
+       left = thirdColumn;
+       right = thirdColumn + AFC_W;
+       bottom = firstRow + AFC_H;
+       top = firstRow;
+       if(x > left && x < right && y < bottom && y > top){
+         clickSelection = 3;
+         clicked = true;
+       }
+       left = firstColumn;
+       right = firstColumn + AFC_W;
+       bottom = secondRow + AFC_H;
+       top = secondRow;
+       if(x > left && x < right && y < bottom && y > top){
+         clickSelection = 4;
+         clicked = true;
+       }
+       left = secondColumn;
+       right = secondColumn + AFC_W;
+       bottom = secondRow + AFC_H;
+       top = secondRow;
+       if(x > left && x < right && y < bottom && y > top){
+         clickSelection = 5;
+         clicked = true;
+       }
+       left = thirdColumn;
+       right = thirdColumn + AFC_W;
+       bottom = secondRow + AFC_H;
+       top = secondRow;
+       if(x > left && x < right && y < bottom && y > top){
+         clickSelection = 6;
+         clicked = true;
+       }
+
+       return(clicked)
 
      },
      canvas_size: [canvasH, canvasW],
-     click_area: [innerR, outerR],
-     choices: [' '],
+     prompt: null,
+     choices: null,
      response_ends_trial: false,
      trial_duration: 6000,
-     data: {trialType: 'retrieval_trial'},
+     data: {trialType: 'restudy_trial'},
      on_finish: function(data) {
        // Add scene and object to output data
        data.Object = jsPsych.timelineVariable('Object');
        data.Scene = jsPsych.timelineVariable('Scene');
-       data.xPos = jsPsych.timelineVariable('xPos');
-       data.yPos = jsPsych.timelineVariable('yPos');
+       data.RespOption1 = jsPsych.timelineVariable('RespOption1');
+       data.RespOption2 = jsPsych.timelineVariable('RespOption2');
+       data.RespOption3 = jsPsych.timelineVariable('RespOption3');
+       data.RespOption4 = jsPsych.timelineVariable('RespOption4');
+       data.RespOption5 = jsPsych.timelineVariable('RespOption5');
+       data.RespOption6 = jsPsych.timelineVariable('RespOption6');
      }
    };
 
-   var feedback = extend(encoding_stimulus);
+   var feedback = extend(restudy_stimulus);
    feedback.trial_duration = 1000;
-   feedback.stimulus = function(c){
-
-     // present images on a canvas at specific locations
-     var ctx = c.getContext('2d');
-
-     // draw scene
-     var scene = new Image();
-     scene.src = jsPsych.timelineVariable('Scene');
-     var centerx = canvasW/2 - sceneW/2;
-     var centery = canvasH/2 - sceneH/2;
-     ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
-
-     // draw guide circle
-     ctx.strokeStyle = 'white'
-     ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
-     ctx.lineWidth = circleThick;
-     ctx.stroke();
-
-     // draw object jsPsych.timelineVariable('obj_width')*.75, jsPsych.timelineVariable('obj_width')*jsPsych.timelineVariable('obj_ratio')*.75
-     var object = new Image(50,50);
-     object.src = jsPsych.timelineVariable('Object');
-     var centerx = canvasW/2 - objectW/2;
-     var centery = canvasH/2 - objectH/2;
-     var xPos = jsPsych.timelineVariable('xPos');
-     var yPos = jsPsych.timelineVariable('yPos');
-     ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
-
-   }
    feedback.data.trialType = 'feedback'
    feedback.prompt = null;
 
    var retrieval_trials = {
      timeline: [iti, recontruct_trial, feedback],
-     timeline_variables: retpractice_data,
+     timeline_variables: retrieval_data,
      randomize_order: true
    };
 
@@ -608,19 +873,46 @@
      }
    };
 
-   var final_verbaitum_test = extend(recontruct_trial);
-   final_verbaitum_test.response_ends_trial = true;
-   final_verbaitum_test.trial_duration = null;
-   final_verbaitum_test.prompt = 'Press Spacebar to lock-in your response.';
-   final_verbaitum_test.data = {trialType: 'location_test'};
-   final_verbaitum_test.on_finish = function(data) {
-          // Add scene and object to output data
-          data.Object = jsPsych.timelineVariable('Object');
-          data.Scene = jsPsych.timelineVariable('Scene');
-          data.xPos = jsPsych.timelineVariable('xPos');
-          data.yPos = jsPsych.timelineVariable('yPos');
-          data.Condition = jsPsych.timelineVariable('Condition');
-        }
+   var final_verbaitum_test = {
+     type: 'canvas-keyboard-response-mouse-click',
+     images: [jsPsych.timelineVariable('Object'), jsPsych.timelineVariable('Scene')],
+     stimulus: function(c, object, scene) {
+       // canvas
+       var ctx = c.getContext('2d');
+
+       // draw scene
+       var centerx = canvasW/2 - sceneW/2;
+       var centery = canvasH/2 - sceneH/2;
+       ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+
+       // draw object
+       var centerx = canvasW/2 - objectW/2;
+       var centery = canvasH/2 - objectH/2;
+       ctx.drawImage(object, centerx, centery, objectW, objectH);
+
+       // draw guide circle
+       ctx.strokeStyle = 'white'
+       ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
+       ctx.lineWidth = circleThick;
+       ctx.stroke();
+
+     },
+     canvas_size: [canvasH, canvasW],
+     click_area: [innerR, outerR],
+     choices: [' '],
+     prompt: 'Press Spacebar to lock-in your response.',
+     response_ends_trial: true,
+     trial_duration: null,
+     data: {trialType: 'location_test'},
+     on_finish: function(data) {
+      // Add scene and object to output data
+      data.Object = jsPsych.timelineVariable('Object');
+      data.Scene = jsPsych.timelineVariable('Scene');
+      data.xPos = jsPsych.timelineVariable('xPos');
+      data.yPos = jsPsych.timelineVariable('yPos');
+      data.Condition = jsPsych.timelineVariable('Condition');
+    }
+   };
 
    var final_test_procedure = {
      timeline: [iti, final_gist_test, iti, final_verbaitum_test],
@@ -631,7 +923,7 @@
 
    // initialize jsPsych
     jsPsych.init({
-        timeline: [consent, demographic_form, preload, fullscreenOn, encoding, restudy_retrieval_all, final_test, fullscreenOff],
+        timeline: [preload, encoding, restudy_retrieval_all, final_test], // demographic_form, demographic_form, consent, fullscreenOn, , fullscreenOff
         on_finish: function(data){
 
           // a unique data/time string

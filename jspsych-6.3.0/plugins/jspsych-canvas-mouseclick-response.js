@@ -61,14 +61,18 @@ jsPsych.plugins["canvas-mouseclick-response"] = (function () {
         default: [500, 500],
         description: 'Array containing the height (first value) and width (second value) of the canvas element.'
       },
-      images: {
-        type: jsPsych.plugins.parameterType.STRING,
-        array: true,
-        pretty_name: 'Images',
-        default: null,
-        description: 'Array containing the paths to the object and scene images.'
+      on_click: {
+        type: jsPsych.plugins.parameterType.FUNCTION,
+        pretty_name: 'On Click',
+        default: undefined,
+        description: 'The drawing function to apply to the canvas after a correct click. Should take the canvas object as argument.'
       },
-
+      click_correct: {
+        type: jsPsych.plugins.parameterType.FUNCTION,
+        pretty_name: 'Click Correct',
+        default: undefined,
+        description: 'A function that determines whether the x,y coordinate of the click was correct.'
+      }
     }
   }
 
@@ -81,78 +85,29 @@ jsPsych.plugins["canvas-mouseclick-response"] = (function () {
       new_html += trial.prompt;
     }
 
-    // load images
-    let object = new Image();
-    let scene = new Image();
-    object.src = trial.images[0];
-    scene.src = trial.images[1];
-    object.width = 100;
-    object.height = 100;
-
-    // draw
+    // draw trial stimulus
     display_element.innerHTML = new_html;
     let c = document.getElementById("jspsych-canvas-stimulus");
+    trial.stimulus(c);
 
-    var ctx = c.getContext('2d');
-
-    // draw scene
-    var centerx = canvasW/2 - sceneW/2;
-    var centery = canvasH/2 - sceneH/2;
-    ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
-
-    // draw guide circle
-    ctx.strokeStyle = 'white'
-    ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
-    ctx.lineWidth = circleThick;
-    ctx.stroke();
-
-    // draw object
-    var centerx = canvasW/2 - objectW/2;
-    var centery = canvasH/2 - objectH/2;
-    var xPos = jsPsych.timelineVariable('xPos');
-    var yPos = jsPsych.timelineVariable('yPos');
-    var mouseX = null;
-    var mouseY = null;
-    ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
+    // initalize mouseX, mouseY to null
+    let mouseX = null;
+    let mouseY = null;
 
     c.addEventListener('click', e => {
 
+      // x, y coordinate in pixels relative to the upper left hand corner of the
+      // canvas element
       x = e.offsetX;
       y = e.offsetY;
 
-      let cx = ctx.canvas.width/2;
-      let cy = ctx.canvas.height/2;
-
-      let imageCenter_x = cx + xPos;
-      let imageCenter_y = cy + yPos;
-
       // if the click is within the object
-      if(x > imageCenter_x - objectH/2 && x < imageCenter_x + objectW/2 && y > imageCenter_y - objectH/2 && y < imageCenter_y + objectH/2) {
+      if(trial.click_correct(x,y)) {
 
-        // clear canvas
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.beginPath();
+        // redraw stimulus using supplied on_click function
+        trial.on_click(c)
 
-        // draw scene
-        var centerx = canvasW/2 - sceneW/2;
-        var centery = canvasH/2 - sceneH/2;
-        ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
-
-        // draw guide circle
-        ctx.strokeStyle = 'white'
-        ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
-        ctx.lineWidth = circleThick;
-        ctx.stroke();
-
-        // draw object
-        var centerx = canvasW/2 - objectW/2;
-        var centery = canvasH/2 - objectH/2;
-        ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
-
-        // draw a box around the image
-        ctx.strokeRect(centerx+xPos, centery+yPos, objectW, objectH);
-
-        // record the x,y location (px)
+        // record the x,y location (px, relative to upper left hand corner)
         mouseX = x;
         mouseY = y;
 
