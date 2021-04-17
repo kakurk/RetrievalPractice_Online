@@ -392,36 +392,6 @@
      }
    };
 
-  // var restudy_stimulus = extend(encoding_stimulus)
-  // restudy_stimulus.stimulus = function(c) {
-  //        var ctx = c.getContext('2d');
-  //
-  //        // draw scene
-  //        var scene = new Image();
-  //        scene.src = jsPsych.timelineVariable('Scene');
-  //        var centerx = canvasW/2 - sceneW/2;
-  //        var centery = canvasH/2 - sceneH/2;
-  //        ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
-  //
-  //        // draw guide circle
-  //        ctx.strokeStyle = 'white'
-  //        ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
-  //        ctx.lineWidth = circleThick;
-  //        ctx.stroke();
-  //
-  //        // draw object
-  //        var object = new Image();
-  //        object.src = jsPsych.timelineVariable('Object');
-  //        var centerx = canvasW/2 - objectW/2;
-  //        var centery = canvasH/2 - objectH/2;
-  //        var xPos = jsPsych.timelineVariable('xPos');
-  //        var yPos = jsPsych.timelineVariable('yPos');
-  //        ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
-  //
-  //      },
-  // restudy_stimulus.trial_duration = 7000;
-  // restudy_stimulus.data = {trialType: 'restudy_trial'};
-
    var restudy_trials = {
      timeline: [iti, restudy_stimulus],
      timeline_variables: restudy_data,

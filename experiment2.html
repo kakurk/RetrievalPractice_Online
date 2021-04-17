@@ -13,12 +13,12 @@
         <script src="jspsych-6.3.0/plugins/jspsych-fullscreen.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-survey-text.js"></script>
         <script src="jspsych-6.3.0/plugins/jspsych-preload.js"></script>
-        <!-- <script src="scripts/experiment1/encoding.js"></script> -->
+        <script src="scripts/experiment2/encoding.js"></script>
         <script src="functions.js"></script>
-        <script src="scripts/experiment1/instructions_data.js"></script>
-        <!-- <script src="scripts/experiment1/restudy.js"></script> -->
-        <!-- <script src="scripts/experiment1/retpractice.js"></script> -->
-        <!-- <script src="scripts/experiment1/retrieval.js"></script> -->
+        <!-- <script src="scripts/experiment2/instructions_data.js"></script> -->
+        <script src="scripts/experiment2/restudy.js"></script>
+        <script src="scripts/experiment2/retpractice.js"></script>
+        <script src="scripts/experiment2/retrieval.js"></script>
         <link href="jspsych-6.3.0/css/jspsych.css" rel="stylesheet" type="text/css">
         <link href="consent/css/consent.css" rel="stylesheet" type="text/css">
         <style>
@@ -530,7 +530,7 @@
 
    var restudy_trials = {
      timeline: [iti, restudy_stimulus],
-     timeline_variables: retrieval_data,
+     timeline_variables: restudy_data,
      randomize_order: true
    };
 
@@ -783,7 +783,7 @@
 
    var retrieval_trials = {
      timeline: [iti, recontruct_trial, feedback],
-     timeline_variables: retrieval_data,
+     timeline_variables: retpractice_data,
      randomize_order: true
    };
 

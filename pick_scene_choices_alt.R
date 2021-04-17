@@ -1,4 +1,4 @@
-pick_scene_choices <- function(corScene, condition){
+pick_scene_choices <- function(corScene){
   # pick 6 scenes as choices for the 6 AFC
   
   FortyScenes %>%
