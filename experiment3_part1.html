@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My experiment</title>
+        <script src="jspsych-6.3.0/jspsych.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-html-keyboard-response.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-canvas-mouseclick-response.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-external-html.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response-mouse-click.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-instructions.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-fullscreen.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-survey-text.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-preload.js"></script>
+        <script src="functions.js"></script>
+        <script src="scripts/experiment1/instructions_data.js"></script>
+        <!-- <script src="scripts/experiment1/encoding.js"></script>
+        <script src="scripts/experiment1/restudy.js"></script>
+        <script src="scripts/experiment1/retpractice.js"></script>
+        <script src="scripts/experiment1/retrieval.js"></script> -->
+        <link href="jspsych-6.3.0/css/jspsych.css" rel="stylesheet" type="text/css">
+        <link href="consent/css/consent.css" rel="stylesheet" type="text/css">
+        <style>
+            .imageResize{
+              width: 50%;
+              height: 50%;
+            }
+            .resp1 {
+              float: left;
+              padding: 15px;
+              width: 200px;
+            }
+            .resp2 {
+              float: right;
+              padding: 15px;
+              width: 200px;
+            }
+            .jspsych-instructions-nav {
+              clear: both
+            }
+            .resp_opt_div {
+              width: 800px;
+              margin-left: auto;
+              margin-right: auto;
+            }
+            .HeaderText {
+              width: 800px;
+              padding: 15px;
+              margin-left: auto;
+              margin-right: auto;
+            }
+          </style>
+    </head>
+    <body></body>
+    <script>
+
+    // grabs all variables from the url
+    // url variables are specified as follows:
+    // Ex: experiment.html?subject=s001
+    // urlvar.subject = 's001'
+    var urlvar = jsPsych.data.urlVariables();
+    console.log(urlvar.subject)
+    jsPsych.data.addProperties({subject: urlvar.subject});
+
+    // experiment wide parameters
+    var canvasW = 1200 // width of the drawing area (px)
+    var canvasH = 600 // height of the drawing area (px)
+    var objectH = 150 // height of the object (px)
+    var objectW = 150 // width of the object (px)
+    var sceneW = 1000 // width of the scene (px)
+    var sceneH = sceneW*(412/600) // height of the scene (px)
+
+    // Reconstruction
+    var guide_cir_r = 225; // radius of guide circle, (px)
+    var innerR = guide_cir_r - 25; // inner click area radius, (px)
+    var outerR = guide_cir_r + 25; // outer click area radius, (px)
+    var circleThick = 2.5; // the thickness of the guide circle (px)
+
+    // 6 AFC
+    var AFC_H = 150 // height of the alternatives (px)
+    var AFC_W = AFC_H * 600/412 // width of the alternatives (px)
+    var firstRow = 225 // position of the first row (px)
+    var secondRow = 425 // position of the second row (px)
+    var firstColumn = 250 // position of the first column (px)
+    var secondColumn = canvasW/2 - AFC_W/2 // position of the second column (px)
+    var thirdColumn = secondColumn + (secondColumn - firstColumn) // position of the third column (px)
+
+    // Consent Form
+
+      var url = ""
+
+      if (urlvar.subject.substring(0, 5) == "rando") {
+        url = "consent/html/Online_Consent_WebVolunteer_Neut.html"
+      } else if (urlvar.subject.substring(0, 3) == "AMT") {
+        url = "consent/html/Online_Consent_AMT_Neut.html"
+      } else {
+        url = "consent/html/Online_Consent_Sona_Neut.html"
+    }
+
+      var consent = {
+        type:'external-html',
+        url: url,
+        cont_btn: "agree",
+        force_refresh: false,
+        data: {experimentComponent: 'consentForm', trialType: 'consentForm'}
+      };
+
+    // demographics form
+
+    var overEighteen = true;
+
+    var demographic_form = {
+      type: 'survey-text',
+      questions: [{prompt: "What is your age? (e.g., 18)",
+                   name: 'age'},
+                  {prompt: "What is your gender?",
+                   name: 'gender'}
+                ],
+      preamble: "Demographic Questionnaire",
+      data: {experimentComponent: 'demographicsForm', trialType: 'demographicsForm'},
+      on_finish: function(){
+
+        // get data from the last trial
+        var data  = jsPsych.data.getLastTrialData();
+
+        // grab the responses property of data. The 'responses' property is a JSON
+        // text string (see jspsych documentation), so we need to parse it into
+        // an object
+        var response_object = JSON.parse(data.json())
+
+        // Question 1 Screen Out
+        var age_question = response_object[0].response.age // answer to question 1
+        age_question     = age_question.trim()   // remove leading and trailing white spaces
+        var age          = parseInt(age_question)
+
+        // If they are over the age of 18, let them continue
+        if(age < 18 || isNaN(age)){
+          overEighteen = false;
+          var end_message = 'The experiment will not continue. Must be over the age of 18 to participate.'
+            jsPsych.endExperiment(end_message)
+        }
+
+      }
+    };
+
+    // experiment wide
+    var iti = {
+        type: 'html-keyboard-response',
+        stimulus: '<p style="font-size: 48px;">+</p>',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 1000,
+        data: { experimentComponent: 'ITI', trialType: 'ITI'},
+        save_trial_parameters: {
+            stimulus: false,
+            choices: false
+        }};
+
+    // fullscreen on; fullescreen off
+    var fullscreenOn = {
+      type: 'fullscreen',
+      data: { experimentComponent: 'fullscreenUp', trialType: 'fullscreenUp'},
+      fullscreen_mode: true
+    };
+
+    var fullscreenOff = {
+      type: 'fullscreen',
+      data: { experimentComponent: 'fullscreenDown', trialType: 'fullscreenDown'},
+      fullscreen_mode: false
+    };
+
+    // preload stimuli
+    var scenes_to_preload
+    var objects_to_preload
+    scenes_to_preload = enc_data.map(enc_data => enc_data.Scene);
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption1));
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption2));
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption3));
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption4));
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption5));
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption6));
+    objects_to_preload = enc_data.map(enc_data => enc_data.Object);
+
+    var example_images = ['EncodingExample.JPG', 'RestudyExample.JPG',  'RestudyExample_clicked.JPG', 'ReconstructExample.JPG', 'ReconstructExample_response.JPG', 'ReconstructExample_feedback.JPG', 'FinalTest_MC_Example.JPG', 'FinalTest_Location_Example.JPG', 'FinalTest_Location_Example_cross.JPG'];
+
+    example_images = example_images.map(x => 'images/' + x)
+
+    var all_images_to_preload = scenes_to_preload.concat(objects_to_preload).concat(example_images);
+
+    var preload = {
+     type: 'preload',
+     data: { experimentComponent: 'preload', trialType: 'preload'},
+     images: all_images_to_preload,
+     save_trial_parameters: {
+         failed_audio: false,
+         failed_video: false,
+         timeout: false
+     }
+   };
+
+    var encoding_example = '<img class = "imageResize" src="images/EncodingExample.JPG"></img>';
+    var restudy_example = '<img class = "imageResize"src="images/RestudyExample.JPG"></img>';
+    var restudy_example_clicked = '<img class = "imageResize"src="images/RestudyExample_clicked.JPG"></img>';
+    var response_option_div = "<div class='resp_opt_div'><div class='resp1'>1- Likely</div><div class='resp2'>2- Unlikely</div></div>";
+    var recon_example = '<img class = "imageResize" src="images/ReconstructExample.JPG"></img>';
+    var recon_example_cross = '<img class = "imageResize" src="images/ReconstructExample_response.JPG"></img>';
+    var recon_example_feedback = '<img class = "imageResize" src="images/ReconstructExample_feedback.JPG"></img>';
+    var MC_test_example = '<img class = "imageResize" src="images/FinalTest_MC_Example.JPG"></img>';
+    var location_test_example = '<img class = "imageResize" src="images/FinalTest_Location_Example.JPG"></img>';
+    var location_test_example_cross = '<img class = "imageResize" src="images/FinalTest_Location_Example_cross.JPG"></img>';
+
+    var enc_instruction = {
+      type: 'instructions',
+      pages: ['<div class="HeaderText"><p>Welcome to the experiment.</p><p>Click next to advance.</p></div>',
+              '<div class="HeaderText">In the following Encoding Phase of the experiment, you will be presented with an object placed on top of a background scene:</div>'+encoding_example,
+              '<div class="HeaderText">'+'You will be asked on each trial to determine how likely the object is to be found in its specific position withn the scene.'+
+              ' Press the <b>1 key at the top of the keyboard</b> if you think the object is <i>likely</i> to be found in its specific position within the scene. '+
+              'Press the <b>2 key at the top of the keyboard</b> if you think the object is <i>unlikey</i> to be found in its specific position within the scene.'+
+              '</div>'+encoding_example+response_option_div,
+              '<div class="HeaderText"><p>You will be presented with 60 object-image pairs.</p><p>The Encoding Phase will take approximately 6 minutes to complete.</p><p>Click next to begin.</p></div>'],
+      show_clickable_nav: true,
+      data: {trialType: 'encodingInstructions'}
+    };
+
+    var encoding_stimulus = {
+     type: 'canvas-keyboard-response',
+     stimulus: function(c) {
+       var ctx = c.getContext('2d');
+       var object = new Image();
+       var scene = new Image();
+       object.src = jsPsych.timelineVariable('Object');
+       scene.src = jsPsych.timelineVariable('Scene');
+       var centerx = canvasW/2 - sceneW/2;
+       var centery = canvasH/2 - sceneH/2;
+       ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+       var centerx = canvasW/2 - objectW/2;
+       var centery = canvasH/2 - objectH/2;
+       var xPos = jsPsych.timelineVariable('xPos');
+       var yPos = jsPsych.timelineVariable('yPos');
+       ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
+     },
+     canvas_size: [canvasH, canvasW],
+     choices: ['1','2'],
+     prompt: response_option_div,
+     trial_duration: 4000,
+     response_ends_trial: false,
+     data: {trialType: 'encoding_trial'},
+     on_finish: function(data) {
+       // Add scene and object to output data
+       data.Object = jsPsych.timelineVariable('Object');
+       data.Scene = jsPsych.timelineVariable('Scene');
+       data.xPos = jsPsych.timelineVariable('xPos');
+       data.yPos = jsPsych.timelineVariable('yPos');
+     }
+    };
+
+    var encoding_trials = {
+      timeline: [iti, encoding_stimulus],
+      timeline_variables: enc_data
+    };
+
+    var encoding = {timeline: [enc_instruction, encoding_trials, iti], data: {experimentComponent: 'encoding'}};
+
+    // practice phase
+    var practice_phase_instructions = {
+      type: 'instructions',
+      pages: ['<div class="HeaderText"><p>You completed the Encoding Phase.</p><p>You will now complete the Practice Phase.</p><p>Click next to advance.</p></div>',
+              '<div class="HeaderText"><p>In the following Practice Phase of the experiment, you will be represented with the objects and scenes from the Encoding Phase.</p><p>You will be asked on each trial to EITHER restudy the object and scene pair OR to report the position that the object was shown on the scene.</p></div>',
+              '<div class="HeaderText">On restudy trials, you will be represented with the original object scene pairing. Your task is to click on the object.</div>'+restudy_example,
+              '<div class="HeaderText">Once you click on the object, a white border will appear around the object.</div>'+restudy_example_clicked,
+              '<div class="HeaderText">On retrieval trials, you will be presented with an object/scene pair with the object presented in the center of the screen. You are tasked with indicating the position that the object was on the scene using your mouse.</div>'+recon_example,
+              '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the white circle. When a response is recorded, a black X will appear at your responded location.</div>'+recon_example_cross,
+              '<div class="HeaderText">Retrieval trials will also provide you feedback on your reponse, by briefly showing you the correct position the object took from encoding. </div>'+recon_example_feedback,
+              '<div class="HeaderText"><p>You will complete 3 rounds of restudy and retrieval and you will be given a chance to take a break in between each round.</p>You will complete restudy and retrieval trials in blocks of 30 trials. Each block will be cued with a screen.<p></p><p>In total, the Practice Phase will take approximately 25 minutes to complete.</p><p>Click next to begin.</p></div>'],
+      show_clickable_nav: true,
+      data: {trialType: 'practiceInstructions'}
+    };
+
+    // practice phase break
+    var take_a_break = {
+      type: 'instructions',
+      pages: ['<p>Take a break.</p><p>When you are ready, click "Continue".</p>'],
+      show_clickable_nav: true,
+      allow_keys: false,
+      button_label_next: 'Continue',
+      button_label_previous: '',
+      data: {trialType: 'take a break'}
+    };
+
+   // Restudy
+   var restudy_instructions = {
+     type: 'html-keyboard-response',
+     stimulus: '<p style="font-size: 48px;">RESTUDY</p>',
+     choices: jsPsych.NO_KEYS,
+     trial_duration: 4000,
+     save_trial_parameters: {
+         stimulus: false,
+         choices: false
+     },
+     data: {trialType: 'Restudy Cue Screen'}
+   };
+
+   var object = new Image();
+   var object_source;
+   var scene = new Image();
+   var scene_source;
+   var xPos;
+   var yPos;
+
+   var restudy_stimulus = {
+     type: 'canvas-mouseclick-response',
+     on_start: function(){
+       object_source = jsPsych.timelineVariable('Object');
+       object.src = object_source;
+       scene_source = jsPsych.timelineVariable('Scene');
+       scene.src = scene_source;
+       xPos = jsPsych.timelineVariable('xPos');
+       yPos = jsPsych.timelineVariable('yPos');
+     },
+     stimulus: function(c) {
+
+       var ctx = c.getContext('2d');
+
+       // draw scene
+       var centerx = ctx.canvas.width/2 - sceneW/2;
+       var centery = ctx.canvas.height/2 - sceneH/2;
+       ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+
+       // draw guide circle
+       ctx.strokeStyle = 'white'
+       ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
+       ctx.lineWidth = circleThick;
+       ctx.stroke();
+
+       // draw object
+       var centerx = ctx.canvas.width/2 - objectW/2;
+       var centery = ctx.canvas.height/2 - objectH/2;
+       ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
+
+     },
+     on_click: function(c) {
+
+       var ctx = c.getContext('2d');
+
+       // clear canvas
+       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+       ctx.beginPath();
+
+       // draw scene
+       var centerx = ctx.canvas.width/2 - sceneW/2;
+       var centery = ctx.canvas.height/2 - sceneH/2;
+       ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+
+       // draw guide circle
+       ctx.strokeStyle = 'white'
+       ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
+       ctx.lineWidth = circleThick;
+       ctx.stroke();
+
+       // draw object
+       var centerx = ctx.canvas.width/2 - objectW/2;
+       var centery = ctx.canvas.height/2 - objectH/2;
+       ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
+
+       // draw border
+       ctx.strokeRect(centerx+xPos, centery+yPos, objectW, objectH);
+
+     },
+     click_correct: function(x,y){
+
+       let cx = canvasW/2;
+       let cy = canvasH/2;
+
+       let imageCenter_x = cx + xPos;
+       let imageCenter_y = cy + yPos;
+
+       return(x > imageCenter_x - objectH/2 && x < imageCenter_x + objectW/2 && y > imageCenter_y - objectH/2 && y < imageCenter_y + objectH/2)
+
+     },
+     canvas_size: [canvasH, canvasW],
+     choices: null,
+     trial_duration: 7000,
+     data: {trialType: 'restudy_trial'},
+     prompt: 'Click on the object image.',
+     response_ends_trial: false,
+     on_finish: function(data) {
+       // Add scene and object to output data
+       data.Object = jsPsych.timelineVariable('Object');
+       data.Scene = jsPsych.timelineVariable('Scene');
+       data.xPos = jsPsych.timelineVariable('xPos');
+       data.yPos = jsPsych.timelineVariable('yPos');
+     }
+   };
+
+   var restudy_trials = {
+     timeline: [iti, restudy_stimulus],
+     timeline_variables: restudy_data,
+     randomize_order: true
+   };
+
+   var restudy = {timeline: [restudy_instructions, restudy_trials]};
+
+   // Retrieval
+
+   var retrieval_instructions = {
+     type: 'html-keyboard-response',
+     stimulus: '<p style="font-size: 48px;">RETRIEVAL</p>',
+     choices: jsPsych.NO_KEYS,
+     trial_duration: 4000,
+     save_trial_parameters: {
+         stimulus: false,
+         choices: false
+     },
+     data: {trialType: 'Retrieval Cue Screen'}
+   };
+
+   var recontruct_trial = {
+     type: 'canvas-keyboard-response-mouse-click',
+     images: [jsPsych.timelineVariable('Object'), jsPsych.timelineVariable('Scene')],
+     stimulus: function(c, object, scene) {
+       // canvas
+       var ctx = c.getContext('2d');
+
+       // draw scene
+       var centerx = canvasW/2 - sceneW/2;
+       var centery = canvasH/2 - sceneH/2;
+       ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+
+       // draw object
+       var centerx = canvasW/2 - objectW/2;
+       var centery = canvasH/2 - objectH/2;
+       ctx.drawImage(object, centerx, centery, objectW, objectH);
+
+       // draw guide circle
+       ctx.strokeStyle = 'white'
+       ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
+       ctx.lineWidth = circleThick;
+       ctx.stroke();
+
+     },
+     canvas_size: [canvasH, canvasW],
+     click_area: [innerR, outerR],
+     choices: [' '],
+     response_ends_trial: false,
+     trial_duration: 6000,
+     data: {trialType: 'retrieval_trial'},
+     on_finish: function(data) {
+       // Add scene and object to output data
+       data.Object = jsPsych.timelineVariable('Object');
+       data.Scene = jsPsych.timelineVariable('Scene');
+       data.xPos = jsPsych.timelineVariable('xPos');
+       data.yPos = jsPsych.timelineVariable('yPos');
+     }
+   };
+
+   var feedback = extend(encoding_stimulus);
+   feedback.trial_duration = 1000;
+   feedback.stimulus = function(c){
+
+     // present images on a canvas at specific locations
+     var ctx = c.getContext('2d');
+
+     // draw scene
+     var scene = new Image();
+     scene.src = jsPsych.timelineVariable('Scene');
+     var centerx = canvasW/2 - sceneW/2;
+     var centery = canvasH/2 - sceneH/2;
+     ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+
+     // draw guide circle
+     ctx.strokeStyle = 'white'
+     ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
+     ctx.lineWidth = circleThick;
+     ctx.stroke();
+
+     // draw object jsPsych.timelineVariable('obj_width')*.75, jsPsych.timelineVariable('obj_width')*jsPsych.timelineVariable('obj_ratio')*.75
+     var object = new Image(50,50);
+     object.src = jsPsych.timelineVariable('Object');
+     var centerx = canvasW/2 - objectW/2;
+     var centery = canvasH/2 - objectH/2;
+     var xPos = jsPsych.timelineVariable('xPos');
+     var yPos = jsPsych.timelineVariable('yPos');
+     ctx.drawImage(object, centerx+xPos, centery+yPos, objectW, objectH);
+
+   }
+   feedback.data.trialType = 'feedback'
+   feedback.prompt = null;
+
+   var retrieval_trials = {
+     timeline: [iti, recontruct_trial, feedback],
+     timeline_variables: retpractice_data,
+     randomize_order: true
+   };
+
+   var retreival = {timeline: [retrieval_instructions, retrieval_trials]};
+
+   var restudy_retrieval = {
+     timeline: [restudy, retreival, take_a_break],
+     repetitions: 3
+   };
+
+   var restudy_retrieval_all = {timeline: [practice_phase_instructions, restudy_retrieval],  data: { experimentComponent: 'practice'}};
+
+   // initialize jsPsych
+    jsPsych.init({
+        timeline: [consent, demographic_form, preload, fullscreenOn, encoding, restudy_retrieval_all, fullscreenOff],
+        // timeline: [demographic_form, preload, fullscreenOn, encoding, restudy_retrieval_all, fullscreenOff],
+        // timeline: [fullscreenOn, fullscreenOff],
+        on_finish: function(data){
+
+          // a unique data/time string
+          // mm-dd-yyyy-hh-mm-ss
+          var today = new Date();
+          var datestring = today.getMonth() + '-' + today.getDate() + '-' + today.getFullYear() + '-' + today.getHours() + '-' + today.getMinutes() + '-' + today.getSeconds()
+
+          // Save Data w/ unique data/time string
+          saveData(datestring + '_' + urlvar.subject + "_experiment_data_exp3_part1", jsPsych.data.get().csv());
+          saveData(datestring + '_' + urlvar.subject + "_interaction_data_exp3_part1", jsPsych.data.getInteractionData().csv());
+
+          // Display the link so participants can give themselves SONA credit
+          if(overEighteen){
+            var el = jsPsych.getDisplayElement();
+            var a = document.createElement('a');
+
+            var farewell_paragraph = document.createElement('p');
+            var farewell_text = document.createTextNode("Thank you for participating!");
+            farewell_paragraph.appendChild(farewell_text);
+
+            var reminder_paragraph = document.createElement('p');
+            var reminder_text = document.createTextNode("The link for Part 2 will become available on SONA in 24 hours.");
+            reminder_paragraph.appendChild(reminder_text);
+
+            var time_paragraph = document.createElement('p');
+            var time_text = document.createTextNode("After the link for Part 2 becomes available, you will have 24 hours to complete Part 2.");
+            time_paragraph.appendChild(time_text);
+
+            var linkText = document.createTextNode("Follow This Link To Get Your SONA Credit for Part 1");
+            a.appendChild(linkText);
+            a.href = "https://bc.sona-systems.com/webstudy_credit.aspx?experiment_id=1208&credit_token=3144619558844d91abddb045963490d7&survey_code=" + urlvar.subject
+
+            el.appendChild(farewell_paragraph);
+            el.appendChild(reminder_paragraph);
+            el.appendChild(time_paragraph);
+            el.appendChild(a);
+          }
+
+        }
+    })
+
+  </script>
+
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My experiment</title>
+        <script src="jspsych-6.3.0/jspsych.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-html-keyboard-response.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-canvas-mouseclick-response.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-external-html.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-canvas-keyboard-response-mouse-click.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-instructions.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-fullscreen.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-survey-text.js"></script>
+        <script src="jspsych-6.3.0/plugins/jspsych-preload.js"></script>
+        <script src="scripts/experiment1/encoding.js"></script>
+        <script src="functions.js"></script>
+        <!-- <script src="scripts/experiment1/instructions_data.js"></script> -->
+        <script src="scripts/experiment1/restudy.js"></script>
+        <script src="scripts/experiment1/retpractice.js"></script>
+        <script src="scripts/experiment1/retrieval.js"></script>
+        <link href="jspsych-6.3.0/css/jspsych.css" rel="stylesheet" type="text/css">
+        <link href="consent/css/consent.css" rel="stylesheet" type="text/css">
+        <style>
+            .imageResize{
+              width: 50%;
+              height: 50%;
+            }
+            .resp1 {
+              float: left;
+              padding: 15px;
+              width: 200px;
+            }
+            .resp2 {
+              float: right;
+              padding: 15px;
+              width: 200px;
+            }
+            .jspsych-instructions-nav {
+              clear: both
+            }
+            .resp_opt_div {
+              width: 800px;
+              margin-left: auto;
+              margin-right: auto;
+            }
+            .HeaderText {
+              width: 800px;
+              padding: 15px;
+              margin-left: auto;
+              margin-right: auto;
+            }
+          </style>
+    </head>
+    <body></body>
+    <script>
+
+    // grabs all variables from the url
+    // url variables are specified as follows:
+    // Ex: experiment.html?subject=s001
+    // urlvar.subject = 's001'
+    var urlvar = jsPsych.data.urlVariables();
+    console.log(urlvar.subject)
+    jsPsych.data.addProperties({subject: urlvar.subject});
+
+    // experiment wide parameters
+    var canvasW = 1200 // width of the drawing area (px)
+    var canvasH = 600 // height of the drawing area (px)
+    var objectH = 150 // height of the object (px)
+    var objectW = 150 // width of the object (px)
+    var sceneW = 1000 // width of the scene (px)
+    var sceneH = sceneW*(412/600) // height of the scene (px)
+
+    // Reconstruction
+    var guide_cir_r = 225; // radius of guide circle, (px)
+    var innerR = guide_cir_r - 25; // inner click area radius, (px)
+    var outerR = guide_cir_r + 25; // outer click area radius, (px)
+    var circleThick = 2.5; // the thickness of the guide circle (px)
+
+    // 6 AFC
+    var AFC_H = 150 // height of the alternatives (px)
+    var AFC_W = AFC_H * 600/412 // width of the alternatives (px)
+    var firstRow = 225 // position of the first row (px)
+    var secondRow = 425 // position of the second row (px)
+    var firstColumn = 250 // position of the first column (px)
+    var secondColumn = canvasW/2 - AFC_W/2 // position of the second column (px)
+    var thirdColumn = secondColumn + (secondColumn - firstColumn) // position of the third column (px)
+
+    // experiment wide
+    var iti = {
+        type: 'html-keyboard-response',
+        stimulus: '<p style="font-size: 48px;">+</p>',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 1000,
+        data: { experimentComponent: 'ITI', trialType: 'ITI'},
+        save_trial_parameters: {
+            stimulus: false,
+            choices: false
+        }};
+
+    // fullscreen on; fullescreen off
+    var fullscreenOn = {
+      type: 'fullscreen',
+      data: { experimentComponent: 'fullscreenUp', trialType: 'fullscreenUp'},
+      fullscreen_mode: true
+    };
+
+    var fullscreenOff = {
+      type: 'fullscreen',
+      data: { experimentComponent: 'fullscreenDown', trialType: 'fullscreenDown'},
+      fullscreen_mode: false
+    };
+
+    // preload stimuli
+    var scenes_to_preload
+    var objects_to_preload
+    scenes_to_preload = enc_data.map(enc_data => enc_data.Scene);
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption1));
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption2));
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption3));
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption4));
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption5));
+    scenes_to_preload = scenes_to_preload.concat(retrieval_data.map(retrieval_data => retrieval_data.RespOption6));
+    objects_to_preload = enc_data.map(enc_data => enc_data.Object);
+
+    var example_images = ['FinalTest_MC_Example.JPG', 'FinalTest_Location_Example.JPG', 'FinalTest_Location_Example_cross.JPG'];
+
+    example_images = example_images.map(x => 'images/' + x)
+
+    var all_images_to_preload = scenes_to_preload.concat(objects_to_preload).concat(example_images);
+
+    var preload = {
+     type: 'preload',
+     data: { experimentComponent: 'preload', trialType: 'preload'},
+     images: all_images_to_preload,
+     save_trial_parameters: {
+         failed_audio: false,
+         failed_video: false,
+         timeout: false
+     }
+   };
+
+    var response_option_div = "<div class='resp_opt_div'><div class='resp1'>1- Likely</div><div class='resp2'>2- Unlikely</div></div>";
+    var MC_test_example = '<img class = "imageResize" src="images/FinalTest_MC_Example.JPG"></img>';
+    var location_test_example = '<img class = "imageResize" src="images/FinalTest_Location_Example.JPG"></img>';
+    var location_test_example_cross = '<img class = "imageResize" src="images/FinalTest_Location_Example_cross.JPG"></img>';
+
+   // retrieval
+   var final_test_instructions = {
+     type: 'instructions',
+     pages: ['<div class="HeaderText"><p>Welcome back to the experiment.</p><p>You will now complete the Final Test Phase.</p><p>Click next to advance.</p></div>',
+             '<div class="HeaderText"><p>In the Final Test Phase of the experiment, you will be represented with the object/scene pairs from the Encoding Phase you completed yesterday.</p><p>On each trial, you will be asked to identify which scene went with each object using a multiple choice test. Immediately afterwards, you will be asked to indicate where the object was placed on top of its scene.</p></div>',
+             '<div class="HeaderText">For the multiple choice test, you will be presented with an object from the Encoding Phase along with 6 scene options. Use the <b>1 through 6 keys at the top of the keyboard</b> to indicate which scene was paired with the object.</div>'+MC_test_example,
+             '<div class="HeaderText">For the location memory test, you will be presented with an object/scene pair with the object presented in the center of the screen. You are tasked with indicating the position that the object was on the scene using your mouse.</div>'+location_test_example,
+             '<div class="HeaderText">Click on the position you remember seeing the object on the screen by clicking in a position nearby the white circle. When a response is recorded, a black X will appear at your responded location.</div>'+location_test_example_cross,
+              '<div class="HeaderText">Once you indicate a position, press spacebar to lock in your answer and to advance to the next trial.</div>'+location_test_example_cross,
+             '<div class="HeaderText"><p>In total, this Final Test Phase will take approximately 7.5 minutes to complete.</p><p>Click next when you are ready to begin.</p></div>'],
+     show_clickable_nav: true,
+     data: {trialType: 'finaltestInstructions'}
+   };
+
+   var final_gist_test = {
+     type: 'canvas-keyboard-response',
+     stimulus: function(c) {
+       // c.style.border = "5px solid #A9A9A9";
+       // present images on a canvas at specific locations
+       var ctx = c.getContext('2d');
+       var probe = new Image();
+       var AFC1 = new Image();
+       var AFC2 = new Image();
+       var AFC3 = new Image();
+       var AFC4 = new Image();
+       var AFC5 = new Image();
+       var AFC6 = new Image();
+       probe.src = jsPsych.timelineVariable('Object');
+       AFC1.src = jsPsych.timelineVariable('RespOption1');
+       AFC2.src = jsPsych.timelineVariable('RespOption2');
+       AFC3.src = jsPsych.timelineVariable('RespOption3');
+       AFC4.src = jsPsych.timelineVariable('RespOption4');
+       AFC5.src = jsPsych.timelineVariable('RespOption5');
+       AFC6.src = jsPsych.timelineVariable('RespOption6');
+       var centerx = canvasW/2 - objectW/2
+       var centery = canvasH/2 - objectH/2
+       ctx.drawImage(probe, centerx, centery-200, objectW, objectH);
+
+       ctx.drawImage(AFC1, firstColumn, firstRow, AFC_W, AFC_H);
+       ctx.font = '20px Arial';
+       ctx.fillText('1', firstColumn+(AFC_W/2), firstRow+AFC_H+25)
+
+       ctx.drawImage(AFC2, secondColumn, firstRow, AFC_W, AFC_H);
+       ctx.fillText('2', secondColumn+(AFC_W/2), firstRow+AFC_H+25)
+
+       ctx.drawImage(AFC3, thirdColumn, firstRow, AFC_W, AFC_H);
+       ctx.fillText('3', thirdColumn+(AFC_W/2), firstRow+AFC_H+25)
+
+       ctx.drawImage(AFC4, firstColumn, secondRow, AFC_W, AFC_H);
+       ctx.fillText('4', firstColumn+(AFC_W/2), secondRow+AFC_H+25)
+
+       ctx.drawImage(AFC5, secondColumn, secondRow, AFC_W, AFC_H);
+       ctx.fillText('5', secondColumn+(AFC_W/2), secondRow+AFC_H+25)
+
+       ctx.drawImage(AFC6, thirdColumn, secondRow, AFC_W, AFC_H);
+       ctx.fillText('6', thirdColumn+(AFC_W/2), secondRow+AFC_H+25)
+     },
+     canvas_size: [canvasH, canvasW],
+     prompt: null,
+     choices: ['1','2','3','4','5','6'],
+     response_ends_trial: true,
+     trial_duration: null,
+     data: {trialType: 'mc_test'},
+     on_finish: function(data) {
+       // Add scene and object to output data
+       data.Object = jsPsych.timelineVariable('Object');
+       data.Scene = jsPsych.timelineVariable('Scene');
+       data.Condition = jsPsych.timelineVariable('Condition');
+       data.RespOption1 = jsPsych.timelineVariable('RespOption1');
+       data.RespOption2 = jsPsych.timelineVariable('RespOption2');
+       data.RespOption3 = jsPsych.timelineVariable('RespOption3');
+       data.RespOption4 = jsPsych.timelineVariable('RespOption4');
+       data.RespOption5 = jsPsych.timelineVariable('RespOption5');
+       data.RespOption6 = jsPsych.timelineVariable('RespOption6');
+     }
+   };
+
+   var recontruct_trial = {
+     type: 'canvas-keyboard-response-mouse-click',
+     images: [jsPsych.timelineVariable('Object'), jsPsych.timelineVariable('Scene')],
+     stimulus: function(c, object, scene) {
+       // canvas
+       var ctx = c.getContext('2d');
+
+       // draw scene
+       var centerx = canvasW/2 - sceneW/2;
+       var centery = canvasH/2 - sceneH/2;
+       ctx.drawImage(scene, centerx, centery, sceneW, sceneH);
+
+       // draw object
+       var centerx = canvasW/2 - objectW/2;
+       var centery = canvasH/2 - objectH/2;
+       ctx.drawImage(object, centerx, centery, objectW, objectH);
+
+       // draw guide circle
+       ctx.strokeStyle = 'white'
+       ctx.arc(canvasW/2, canvasH/2, guide_cir_r, 0, 2 * Math.PI);
+       ctx.lineWidth = circleThick;
+       ctx.stroke();
+
+     },
+     canvas_size: [canvasH, canvasW],
+     click_area: [innerR, outerR],
+     choices: [' '],
+     response_ends_trial: false,
+     trial_duration: 6000,
+     data: {trialType: 'retrieval_trial'},
+     on_finish: function(data) {
+       // Add scene and object to output data
+       data.Object = jsPsych.timelineVariable('Object');
+       data.Scene = jsPsych.timelineVariable('Scene');
+       data.xPos = jsPsych.timelineVariable('xPos');
+       data.yPos = jsPsych.timelineVariable('yPos');
+     }
+   };
+
+   var final_verbaitum_test = extend(recontruct_trial);
+   final_verbaitum_test.response_ends_trial = true;
+   final_verbaitum_test.trial_duration = null;
+   final_verbaitum_test.prompt = 'Press Spacebar to lock-in your response.';
+   final_verbaitum_test.data = {trialType: 'location_test'};
+   final_verbaitum_test.on_finish = function(data) {
+          // Add scene and object to output data
+          data.Object = jsPsych.timelineVariable('Object');
+          data.Scene = jsPsych.timelineVariable('Scene');
+          data.xPos = jsPsych.timelineVariable('xPos');
+          data.yPos = jsPsych.timelineVariable('yPos');
+          data.Condition = jsPsych.timelineVariable('Condition');
+        }
+
+   var final_test_procedure = {
+     timeline: [iti, final_gist_test, iti, final_verbaitum_test],
+     timeline_variables: retrieval_data
+   };
+
+   var final_test = {timeline: [final_test_instructions, final_test_procedure], data: { experimentComponent: 'final_test'}};
+
+   // initialize jsPsych
+    jsPsych.init({
+        timeline: [preload, fullscreenOn, final_test, fullscreenOff],
+        on_finish: function(data){
+
+          // a unique data/time string
+          // mm-dd-yyyy-hh-mm-ss
+          var today = new Date();
+          var datestring = today.getMonth() + '-' + today.getDate() + '-' + today.getFullYear() + '-' + today.getHours() + '-' + today.getMinutes() + '-' + today.getSeconds()
+
+          // Save Data w/ unique data/time string
+          saveData(datestring + '_' + urlvar.subject + "_experiment_data_exp3_part2", jsPsych.data.get().csv());
+          saveData(datestring + '_' + urlvar.subject + "_interaction_data_exp3_part2", jsPsych.data.getInteractionData().csv());
+
+          // Display the link so participants can give themselves SONA credit
+          if(overEighteen){
+            var el = jsPsych.getDisplayElement();
+            var a = document.createElement('a');
+            var farewell_paragraph = document.createElement('p');
+            var farewell_text = document.createTextNode("Thank you for participating!");
+            farewell_paragraph.appendChild(farewell_text);
+            var linkText = document.createTextNode("Follow This Link To Get Your SONA Credit For Part 2");
+            a.appendChild(linkText);
+            a.href = "https://bc.sona-systems.com/webstudy_credit.aspx?experiment_id=1209&credit_token=44b8d002533140eb924a199c6ac9a743&survey_code=" + urlvar.subject
+            el.appendChild(farewell_paragraph);
+            el.appendChild(a);
+          }
+
+        }
+    })
+
+  </script>
+
+</html>
